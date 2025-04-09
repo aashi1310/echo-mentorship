@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, Filter, Star, ArrowUpRight } from "lucide-react";
 import BookingDialog from "@/components/BookingDialog";
+import MentorProfileView from "@/components/MentorProfileView";
+import FiltersDialog from "@/components/FiltersDialog";
 
 // Updated mentors with Indian names and more diverse expertise fields
 const mentors = [
@@ -22,7 +23,7 @@ const mentors = [
     experience: "10+ years",
     rating: 4.9,
     reviews: 42,
-    pricing: "₹2,000/session",
+    pricing: "₹1,800/session",
     availability: "Next available: Today",
     image: "https://randomuser.me/api/portraits/men/36.jpg",
     languages: ["English", "Hindi"]
@@ -36,7 +37,7 @@ const mentors = [
     experience: "8+ years",
     rating: 4.8,
     reviews: 35,
-    pricing: "₹1,800/session",
+    pricing: "₹1,600/session",
     availability: "Next available: Tomorrow",
     image: "https://randomuser.me/api/portraits/women/26.jpg",
     languages: ["English", "Hindi", "Punjabi"]
@@ -50,7 +51,7 @@ const mentors = [
     experience: "12+ years",
     rating: 4.7,
     reviews: 29,
-    pricing: "₹2,500/session",
+    pricing: "₹2,000/session",
     availability: "Next available: Thursday",
     image: "https://randomuser.me/api/portraits/men/32.jpg",
     languages: ["English", "Hindi"]
@@ -78,7 +79,7 @@ const mentors = [
     experience: "15+ years",
     rating: 4.9,
     reviews: 47,
-    pricing: "₹3,000/session",
+    pricing: "₹2,200/session",
     availability: "Next available: Monday",
     image: "https://randomuser.me/api/portraits/men/11.jpg",
     languages: ["English", "Hindi", "Punjabi"]
@@ -92,7 +93,7 @@ const mentors = [
     experience: "9+ years",
     rating: 4.7,
     reviews: 33,
-    pricing: "₹2,200/session",
+    pricing: "₹1,900/session",
     availability: "Next available: Wednesday",
     image: "https://randomuser.me/api/portraits/women/79.jpg",
     languages: ["English", "Hindi"]
@@ -122,6 +123,9 @@ const categories = [
 const FindMentors = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("All Categories");
+  const [selectedMentor, setSelectedMentor] = useState(null);
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [showFiltersDialog, setShowFiltersDialog] = useState(false);
 
   // Filter mentors based on search query and selected category
   const filteredMentors = mentors.filter((mentor) => {
@@ -134,6 +138,16 @@ const FindMentors = () => {
     
     return matchesSearch && matchesCategory;
   });
+
+  const handleViewProfile = (mentor) => {
+    setSelectedMentor(mentor);
+    setShowProfileDialog(true);
+  };
+
+  const handleApplyFilters = () => {
+    // In a real app, this would apply the filter values
+    // For now, we'll just close the dialog
+  };
 
   return (
     <PageLayout>
@@ -168,7 +182,11 @@ const FindMentors = () => {
               ))}
             </SelectContent>
           </Select>
-          <Button variant="outline" className="flex gap-2 w-full md:w-auto">
+          <Button 
+            variant="outline" 
+            className="flex gap-2 w-full md:w-auto"
+            onClick={() => setShowFiltersDialog(true)}
+          >
             <Filter className="h-4 w-4" />
             More Filters
           </Button>
@@ -232,7 +250,11 @@ const FindMentors = () => {
                 </div>
               </CardContent>
               <CardFooter className="flex gap-2">
-                <Button variant="outline" className="flex-1 flex items-center gap-1">
+                <Button 
+                  variant="outline" 
+                  className="flex-1 flex items-center gap-1"
+                  onClick={() => handleViewProfile(mentor)}
+                >
                   <ArrowUpRight className="h-4 w-4" />
                   Profile
                 </Button>
@@ -256,6 +278,20 @@ const FindMentors = () => {
           </div>
         )}
       </div>
+
+      {selectedMentor && (
+        <MentorProfileView 
+          open={showProfileDialog} 
+          onOpenChange={setShowProfileDialog} 
+          mentor={selectedMentor} 
+        />
+      )}
+
+      <FiltersDialog 
+        open={showFiltersDialog} 
+        onOpenChange={setShowFiltersDialog}
+        onApplyFilters={handleApplyFilters}
+      />
     </PageLayout>
   );
 };

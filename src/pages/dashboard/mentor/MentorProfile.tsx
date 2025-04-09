@@ -1,4 +1,5 @@
 
+import React, { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +9,60 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Upload } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const MentorProfile = () => {
+  const [profileImage, setProfileImage] = useState("/placeholder.svg");
+  const [name, setName] = useState("Rajat Kumar");
+  const [title, setTitle] = useState("Senior Software Engineer at TechCorp");
+  const [bio, setBio] = useState("Software engineer with 8+ years of experience in full-stack development. Passionate about mentoring and helping others grow in their tech career.");
+  const [email, setEmail] = useState("rajat.kumar@example.com");
+  const [phone, setPhone] = useState("+91 98765 43210");
+  const [location, setLocation] = useState("Bangalore, India");
+  const [languages, setLanguages] = useState("English, Hindi");
+  const [expertise, setExpertise] = useState(["JavaScript", "React", "Node.js", "Career Growth", "System Design"]);
+  const [newSkill, setNewSkill] = useState("");
+  
+  const handleAddSkill = () => {
+    if (newSkill.trim() && !expertise.includes(newSkill.trim())) {
+      setExpertise([...expertise, newSkill.trim()]);
+      setNewSkill("");
+    }
+  };
+  
+  const handleRemoveSkill = (skill) => {
+    setExpertise(expertise.filter(s => s !== skill));
+  };
+  
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfileImage(e.target.result);
+        toast({
+          title: "Profile Picture Updated",
+          description: "Your profile picture has been successfully updated.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const handleUpdateProfile = () => {
+    toast({
+      title: "Profile Updated",
+      description: "Your public profile has been successfully updated.",
+    });
+  };
+  
+  const handleSavePersonalInfo = () => {
+    toast({
+      title: "Personal Information Updated",
+      description: "Your personal information has been successfully updated.",
+    });
+  };
+
   return (
     <DashboardLayout userType="mentor">
       <div className="space-y-8">
@@ -31,7 +84,7 @@ const MentorProfile = () => {
             <CardContent className="space-y-6">
               <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src="/placeholder.svg" alt="Profile Avatar" />
+                  <AvatarImage src={profileImage} alt="Profile Avatar" />
                   <AvatarFallback>RK</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
@@ -39,24 +92,38 @@ const MentorProfile = () => {
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
                     A professional photo is recommended. Maximum size 2MB.
                   </p>
-                  <Button variant="outline" size="sm">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload New Picture
-                  </Button>
+                  <label htmlFor="profile-upload">
+                    <Button variant="outline" size="sm" as="span" className="cursor-pointer">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload New Picture
+                    </Button>
+                    <input 
+                      id="profile-upload" 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handleImageUpload}
+                    />
+                  </label>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="grid gap-2">
                   <Label htmlFor="name">Display Name</Label>
-                  <Input id="name" defaultValue="Rajat Kumar" />
+                  <Input 
+                    id="name" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
 
                 <div className="grid gap-2">
                   <Label htmlFor="title">Professional Title</Label>
                   <Input
                     id="title"
-                    defaultValue="Senior Software Engineer at TechCorp"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
 
@@ -65,7 +132,8 @@ const MentorProfile = () => {
                   <Textarea
                     id="bio"
                     rows={4}
-                    defaultValue="Software engineer with 8+ years of experience in full-stack development. Passionate about mentoring and helping others grow in their tech career."
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
                   />
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Brief description of your background and mentoring focus.
@@ -76,23 +144,39 @@ const MentorProfile = () => {
                 <div className="grid gap-2">
                   <Label>Expertise</Label>
                   <div className="flex flex-wrap gap-2">
-                    <Badge>JavaScript</Badge>
-                    <Badge>React</Badge>
-                    <Badge>Node.js</Badge>
-                    <Badge>Career Growth</Badge>
-                    <Badge>System Design</Badge>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 rounded-full"
-                    >
-                      + Add
-                    </Button>
+                    {expertise.map((skill) => (
+                      <Badge key={skill} className="group">
+                        {skill}
+                        <button 
+                          className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => handleRemoveSkill(skill)}
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        value={newSkill}
+                        onChange={(e) => setNewSkill(e.target.value)}
+                        className="h-6 w-32 text-sm"
+                        placeholder="Add skill..."
+                        onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-6 rounded-full px-2"
+                        onClick={handleAddSkill}
+                      >
+                        +
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <Button className="w-full">Update Public Profile</Button>
+              <Button className="w-full" onClick={handleUpdateProfile}>Update Public Profile</Button>
             </CardContent>
           </Card>
 
@@ -110,7 +194,8 @@ const MentorProfile = () => {
                   <Input
                     id="email"
                     type="email"
-                    defaultValue="rajat.kumar@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
 
@@ -119,21 +204,30 @@ const MentorProfile = () => {
                   <Input
                     id="phone"
                     type="tel"
-                    defaultValue="+91 98765 43210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
 
                 <div className="grid gap-2">
                   <Label htmlFor="location">Location</Label>
-                  <Input id="location" defaultValue="Bangalore, India" />
+                  <Input 
+                    id="location" 
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
                 </div>
 
                 <div className="grid gap-2">
                   <Label htmlFor="languages">Languages Spoken</Label>
-                  <Input id="languages" defaultValue="English, Hindi" />
+                  <Input 
+                    id="languages" 
+                    value={languages}
+                    onChange={(e) => setLanguages(e.target.value)}
+                  />
                 </div>
 
-                <Button className="w-full">Save Personal Information</Button>
+                <Button className="w-full" onClick={handleSavePersonalInfo}>Save Personal Information</Button>
               </CardContent>
             </Card>
 

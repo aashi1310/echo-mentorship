@@ -11,10 +11,29 @@ const GoogleMeetRedirect = () => {
   const navigate = useNavigate();
   const { sessionId } = useParams();
   
+  // Generate a valid Google Meet link with correct meeting code format (3 groups of 4 characters)
+  const generateMeetCode = () => {
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    let code = '';
+    
+    // Generate 3 groups of 4 characters separated by hyphens
+    for (let group = 0; group < 3; group++) {
+      for (let i = 0; i < 4; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        code += chars[randomIndex];
+      }
+      if (group < 2) code += '-';
+    }
+    
+    return code;
+  };
+  
+  const meetCode = generateMeetCode();
+  
   // In a real app, you would fetch the session details from your backend
   const sessionDetails = {
     id: sessionId || "123456",
-    meetLink: "https://meet.google.com/abc-defg-hij",
+    meetLink: `https://meet.google.com/${meetCode}`,
     mentorName: "Rajat Kumar",
     menteeName: "Ankit Sharma",
     topic: "Career Transition to Product Management",

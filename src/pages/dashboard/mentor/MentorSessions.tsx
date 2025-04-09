@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, Video, MessageSquare, FileText } from "lucide-react";
+import RescheduleSessionDialog from "@/components/RescheduleSessionDialog";
 
 // Sample data for the sessions
 const upcomingSessions = [
@@ -74,6 +75,13 @@ const pastSessions = [
 
 const MentorSessions = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [selectedSession, setSelectedSession] = useState(null);
+  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+
+  const handleReschedule = (session) => {
+    setSelectedSession(session);
+    setShowRescheduleDialog(true);
+  };
 
   return (
     <DashboardLayout userType="mentor">
@@ -136,11 +144,17 @@ const MentorSessions = () => {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleReschedule(session)}
+                          >
                             Reschedule
                           </Button>
-                          <Button size="sm">
-                            Join Session
+                          <Button size="sm" asChild>
+                            <a href={`/join-session/${session.id}`}>
+                              Join Session
+                            </a>
                           </Button>
                         </div>
                       </div>
@@ -250,6 +264,21 @@ const MentorSessions = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {selectedSession && (
+        <RescheduleSessionDialog
+          open={showRescheduleDialog}
+          onOpenChange={setShowRescheduleDialog}
+          sessionDetails={{
+            id: selectedSession.id,
+            mentee: selectedSession.mentee,
+            topic: selectedSession.topic,
+            date: selectedSession.date,
+            time: selectedSession.time
+          }}
+          userType="mentor"
+        />
+      )}
     </DashboardLayout>
   );
 };

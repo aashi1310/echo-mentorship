@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, Calendar, MessageSquare, Star, ArrowUpRight } from "lucide-react";
+import MessageMentorDialog from "@/components/MessageMentorDialog";
 
 // Sample data for mentors
 const currentMentors = [
@@ -45,7 +45,7 @@ const recommendedMentors = [
     experience: "7+ years",
     rating: 4.9,
     reviews: 28,
-    pricing: "₹2,000/session",
+    pricing: "₹1,800/session",
     availability: "Next available: Today",
     image: "/placeholder.svg",
   },
@@ -57,7 +57,7 @@ const recommendedMentors = [
     experience: "9+ years",
     rating: 4.8,
     reviews: 35,
-    pricing: "₹2,500/session",
+    pricing: "₹2,000/session",
     availability: "Next available: Tomorrow",
     image: "/placeholder.svg",
   },
@@ -69,7 +69,7 @@ const recommendedMentors = [
     experience: "12+ years",
     rating: 4.7,
     reviews: 19,
-    pricing: "₹3,000/session",
+    pricing: "₹2,500/session",
     availability: "Next available: Thursday",
     image: "/placeholder.svg",
   },
@@ -81,7 +81,7 @@ const recommendedMentors = [
     experience: "8+ years",
     rating: 4.8,
     reviews: 22,
-    pricing: "₹2,200/session",
+    pricing: "₹1,900/session",
     availability: "Next available: Friday",
     image: "/placeholder.svg",
   },
@@ -102,6 +102,13 @@ const MenteeMentors = () => {
   const [activeTab, setActiveTab] = useState("current");
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("All Categories");
+  const [selectedMentor, setSelectedMentor] = useState(null);
+  const [showMessageDialog, setShowMessageDialog] = useState(false);
+
+  const handleMessageMentor = (mentor) => {
+    setSelectedMentor(mentor);
+    setShowMessageDialog(true);
+  };
 
   return (
     <DashboardLayout userType="mentee">
@@ -188,7 +195,11 @@ const MenteeMentors = () => {
                               ))}
                             </div>
                             <div className="flex flex-col gap-2">
-                              <Button variant="outline" size="sm">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleMessageMentor(mentor)}
+                              >
                                 <MessageSquare className="mr-1 h-4 w-4" />
                                 Message
                               </Button>
@@ -292,9 +303,13 @@ const MenteeMentors = () => {
                               <div className="text-xs text-gray-500 dark:text-gray-400">{mentor.availability}</div>
                             </div>
                             <div className="flex gap-2">
-                              <Button variant="outline" size="sm">
-                                <ArrowUpRight className="h-4 w-4 mr-1" />
-                                Profile
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleMessageMentor(mentor)}
+                              >
+                                <MessageSquare className="h-4 w-4 mr-1" />
+                                Message
                               </Button>
                               <Button size="sm">
                                 Book
@@ -332,6 +347,14 @@ const MenteeMentors = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {selectedMentor && (
+        <MessageMentorDialog
+          open={showMessageDialog}
+          onOpenChange={setShowMessageDialog}
+          mentor={selectedMentor}
+        />
+      )}
     </DashboardLayout>
   );
 };

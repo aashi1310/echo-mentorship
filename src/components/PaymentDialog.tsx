@@ -1,185 +1,141 @@
 
 import React, { useState } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Check, CreditCard, Clock, StarIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Check, CreditCard } from "lucide-react";
 
 interface PaymentDialogProps {
+  trigger: React.ReactNode;
   mentorName: string;
-  trigger?: React.ReactNode;
 }
 
-const PaymentDialog = ({ mentorName, trigger }: PaymentDialogProps) => {
-  const [selectedPlan, setSelectedPlan] = useState("monthly");
-  const [processing, setProcessing] = useState(false);
+const PaymentDialog = ({ trigger, mentorName }: PaymentDialogProps) => {
+  const [open, setOpen] = useState(false);
+  const [plan, setPlan] = useState("monthly");
 
-  const handlePayment = () => {
-    setProcessing(true);
-    
-    // Simulate payment processing
-    setTimeout(() => {
-      setProcessing(false);
-      toast({
-        title: "Payment Successful!",
-        description: `You are now subscribed to the ${selectedPlan === "monthly" ? "Monthly" : selectedPlan === "quarterly" ? "Quarterly" : "Annual"} plan.`,
-      });
-    }, 2000);
+  const handleSubmit = () => {
+    toast({
+      title: "Payment Successful",
+      description: `You've subscribed to mentoring with ${mentorName}.`,
+    });
+    setOpen(false);
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        {trigger || <Button>Continue with Paid Mentorship</Button>}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <div onClick={() => setOpen(true)}>{trigger}</div>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Choose Your Mentorship Plan</DialogTitle>
+          <DialogTitle>Continue Mentorship with {mentorName}</DialogTitle>
           <DialogDescription>
-            Continue your mentorship journey with {mentorName} by selecting one of our plans.
+            Select a mentorship plan to continue after your free trial
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="py-4">
-          <RadioGroup 
-            value={selectedPlan} 
-            onValueChange={setSelectedPlan}
-            className="gap-4"
-          >
-            <div className={`border-2 rounded-lg p-4 ${selectedPlan === "monthly" ? "border-primary" : "border-border"}`}>
-              <div className="flex items-start space-x-2">
-                <RadioGroupItem value="monthly" id="monthly" className="mt-1" />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="monthly" className="font-medium text-lg">Monthly Plan</Label>
-                    <Badge>Popular</Badge>
+
+        <div className="space-y-6 py-4">
+          <div className="flex items-center gap-4 border-b pb-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage src="/placeholder.svg" alt={mentorName} />
+              <AvatarFallback>{mentorName.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="font-medium">{mentorName}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Senior Product Manager at TechCorp
+              </p>
+              <div className="flex mt-1">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className="h-4 w-4 text-yellow-400 fill-yellow-400"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <RadioGroup value={plan} onValueChange={setPlan}>
+            <div className="space-y-4">
+              <div className={`border rounded-lg p-4 cursor-pointer ${plan === "monthly" ? "border-primary bg-primary/5" : ""}`}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="monthly" id="monthly" />
+                    <Label htmlFor="monthly" className="font-medium cursor-pointer">Monthly Plan</Label>
                   </div>
-                  <p className="text-muted-foreground text-sm mt-1">4 mentoring sessions per month</p>
-                  <div className="mt-3">
-                    <span className="text-2xl font-bold">₹5,999</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
-                  <ul className="mt-3 space-y-2">
+                  {plan === "monthly" && <Check className="h-5 w-5 text-primary" />}
+                </div>
+                <div className="pl-6 mt-2">
+                  <div className="text-2xl font-bold">₹1,999<span className="text-sm font-normal text-gray-500 dark:text-gray-400">/month</span></div>
+                  <ul className="mt-2 space-y-1 text-sm text-gray-500 dark:text-gray-400">
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">4 One-on-one sessions (45 mins each)</span>
+                      <Check className="h-3.5 w-3.5 text-green-500 mr-1.5" />
+                      2 mentoring sessions per month
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">Chat support between sessions</span>
+                      <Check className="h-3.5 w-3.5 text-green-500 mr-1.5" />
+                      Direct messaging with your mentor
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">Personalized roadmap</span>
+                      <Check className="h-3.5 w-3.5 text-green-500 mr-1.5" />
+                      Access to resources shared by mentor
                     </li>
                   </ul>
                 </div>
               </div>
-            </div>
-            
-            <div className={`border-2 rounded-lg p-4 ${selectedPlan === "quarterly" ? "border-primary" : "border-border"}`}>
-              <div className="flex items-start space-x-2">
-                <RadioGroupItem value="quarterly" id="quarterly" className="mt-1" />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="quarterly" className="font-medium text-lg">Quarterly Plan</Label>
-                    <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800">Save 10%</Badge>
+
+              <div className={`border rounded-lg p-4 cursor-pointer ${plan === "quarterly" ? "border-primary bg-primary/5" : ""}`}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="quarterly" id="quarterly" />
+                    <div>
+                      <Label htmlFor="quarterly" className="font-medium cursor-pointer">Quarterly Plan</Label>
+                      <span className="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                        Save 15%
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-muted-foreground text-sm mt-1">12 mentoring sessions over 3 months</p>
-                  <div className="mt-3">
-                    <span className="text-2xl font-bold">₹16,199</span>
-                    <span className="text-muted-foreground">/quarter</span>
-                    <span className="text-xs ml-2 line-through text-muted-foreground">₹17,997</span>
-                  </div>
-                  <ul className="mt-3 space-y-2">
-                    <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">All Monthly plan benefits</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">Priority scheduling</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">Document & resume reviews</span>
-                    </li>
-                  </ul>
+                  {plan === "quarterly" && <Check className="h-5 w-5 text-primary" />}
                 </div>
-              </div>
-            </div>
-            
-            <div className={`border-2 rounded-lg p-4 ${selectedPlan === "annual" ? "border-primary" : "border-border"}`}>
-              <div className="flex items-start space-x-2">
-                <RadioGroupItem value="annual" id="annual" className="mt-1" />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="annual" className="font-medium text-lg">Annual Plan</Label>
-                    <Badge variant="outline" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800">Best Value!</Badge>
-                  </div>
-                  <p className="text-muted-foreground text-sm mt-1">48 mentoring sessions over 12 months</p>
-                  <div className="mt-3">
-                    <span className="text-2xl font-bold">₹57,599</span>
-                    <span className="text-muted-foreground">/year</span>
-                    <span className="text-xs ml-2 line-through text-muted-foreground">₹71,988</span>
-                  </div>
-                  <ul className="mt-3 space-y-2">
+                <div className="pl-6 mt-2">
+                  <div className="text-2xl font-bold">₹1,699<span className="text-sm font-normal text-gray-500 dark:text-gray-400">/month</span></div>
+                  <ul className="mt-2 space-y-1 text-sm text-gray-500 dark:text-gray-400">
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">All Quarterly plan benefits</span>
+                      <Check className="h-3.5 w-3.5 text-green-500 mr-1.5" />
+                      2 mentoring sessions per month
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">Mock interviews & feedback</span>
+                      <Check className="h-3.5 w-3.5 text-green-500 mr-1.5" />
+                      Direct messaging with your mentor
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      <span className="text-sm">Access to exclusive workshops</span>
+                      <Check className="h-3.5 w-3.5 text-green-500 mr-1.5" />
+                      Access to resources shared by mentor
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-3.5 w-3.5 text-green-500 mr-1.5" />
+                      Quarterly progress review
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
           </RadioGroup>
-          
-          <div className="mt-8">
-            <h4 className="font-medium mb-2">Payment Method</h4>
-            <div className="flex items-center space-x-2 border p-3 rounded-md">
-              <CreditCard className="h-5 w-5 text-muted-foreground" />
-              <span>Credit/Debit Card</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              You'll be redirected to our secure payment gateway to enter your card details.
-            </p>
-          </div>
         </div>
-        
+
         <DialogFooter>
-          <Button 
-            onClick={handlePayment} 
-            className="w-full" 
-            disabled={processing}
-          >
-            {processing ? (
-              <>
-                <Clock className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              `Pay Now • ₹${selectedPlan === "monthly" ? "5,999" : selectedPlan === "quarterly" ? "16,199" : "57,599"}`
-            )}
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+          <Button className="gap-2" onClick={handleSubmit}>
+            <CreditCard className="h-4 w-4" />
+            Subscribe Now
           </Button>
         </DialogFooter>
       </DialogContent>
