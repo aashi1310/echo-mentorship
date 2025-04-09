@@ -1,5 +1,4 @@
-
-import { GitHub, Linkedin, Twitter } from "lucide-react";
+import { Github, Linkedin, Twitter } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 
 interface TeamMember {
@@ -135,7 +134,7 @@ const Team = () => {
             className="text-gray-500 hover:text-echopurple-600 dark:text-gray-400 dark:hover:text-echopurple-400 transition-colors"
             aria-label="GitHub"
           >
-            <GitHub size={18} />
+            <Github size={18} />
           </a>
         )}
       </div>
