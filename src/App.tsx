@@ -36,6 +36,8 @@ import MenteeResources from "./pages/dashboard/mentee/MenteeResources";
 import MenteeMentors from "./pages/dashboard/mentee/MenteeMentors";
 import MenteeGoals from "./pages/dashboard/mentee/MenteeGoals";
 
+import GoogleMeetRedirect from "./components/GoogleMeetRedirect";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -78,6 +80,9 @@ const App = () => (
             <Route path="/mentee/resources" element={<MenteeResources />} />
             <Route path="/mentee/mentors" element={<MenteeMentors />} />
             <Route path="/mentee/goals" element={<MenteeGoals />} />
+            
+            {/* Google Meet Session Joining */}
+            <Route path="/join-session/:sessionId" element={<GoogleMeetRedirect />} />
             
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
