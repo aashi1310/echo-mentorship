@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,31 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// EchoMentor brand colors
+				echoblue: {
+					50: '#f0f7ff',
+					100: '#e0f0ff',
+					200: '#c0e0ff',
+					300: '#80c0ff',
+					400: '#4090ff',
+					500: '#2060f0',
+					600: '#1040e0',
+					700: '#1030b0',
+					800: '#102080',
+					900: '#101860',
+				},
+				echopurple: {
+					50: '#f5f0ff',
+					100: '#ede0ff',
+					200: '#dec0ff',
+					300: '#c080ff',
+					400: '#a040ff',
+					500: '#8020f0',
+					600: '#6010e0',
+					700: '#5010b0',
+					800: '#401080',
+					900: '#301060',
 				}
 			},
 			borderRadius: {
@@ -84,11 +110,16 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-slow': 'pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 			}
 		}
 	},
