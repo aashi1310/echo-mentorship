@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FileText, Download, ExternalLink, Search, Filter, BookOpen } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 // Sample data for resources
 const recommendedResources = [
@@ -21,6 +22,7 @@ const recommendedResources = [
     recommended: true,
     mentor: "Rajat Kumar",
     date: "Apr 5, 2023",
+    url: "/resources/interview-guide.pdf" // Added real URL
   },
   {
     id: 2,
@@ -33,6 +35,7 @@ const recommendedResources = [
     recommended: true,
     mentor: "Meera Patel",
     date: "Mar 28, 2023",
+    url: "/resources/react-patterns.mp4" // Added real URL
   },
   {
     id: 3,
@@ -43,6 +46,7 @@ const recommendedResources = [
     free: true,
     recommended: false,
     date: "Apr 2, 2023",
+    url: "/resources/tech-communication.pdf" // Added real URL
   },
 ];
 
@@ -55,6 +59,7 @@ const savedResources = [
     size: "5.8 MB",
     free: true,
     date: "Mar 15, 2023",
+    url: "/resources/pm-fundamentals.pdf" // Added real URL
   },
   {
     id: 5,
@@ -64,6 +69,7 @@ const savedResources = [
     size: "8.2 MB",
     free: true,
     date: "Mar 20, 2023",
+    url: "/resources/resume-templates.zip" // Added real URL
   }
 ];
 
@@ -78,6 +84,7 @@ const premiumResources = [
     price: "₹2,999",
     rating: 4.9,
     reviews: 128,
+    url: "/resources/pm-masterclass.mp4" // Added real URL
   },
   {
     id: 7,
@@ -88,6 +95,7 @@ const premiumResources = [
     price: "₹1,799",
     rating: 4.7,
     reviews: 86,
+    url: "/resources/career-blueprint.pdf" // Added real URL
   },
   {
     id: 8,
@@ -98,12 +106,64 @@ const premiumResources = [
     price: "₹1,299",
     rating: 4.8,
     reviews: 74,
+    url: "/resources/leadership-toolkit.zip" // Added real URL
   },
 ];
 
 const MenteeResources = () => {
   const [activeTab, setActiveTab] = useState("recommended");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Function to handle download or purchase
+  const handleResourceAction = (resource: any, action: 'download' | 'save' | 'purchase' | 'remove') => {
+    switch(action) {
+      case 'download':
+        // In a real app, this would be a real download function
+        toast({
+          title: "Download started",
+          description: `${resource.title} is being downloaded.`,
+        });
+        // Simulate download with window.open
+        if (resource.url) {
+          window.open(resource.url, '_blank');
+        }
+        break;
+      case 'save':
+        toast({
+          title: "Resource saved",
+          description: `${resource.title} has been saved to your collection.`,
+        });
+        break;
+      case 'purchase':
+        toast({
+          title: "Redirecting to payment",
+          description: `You're being redirected to complete your purchase of ${resource.title}.`,
+        });
+        break;
+      case 'remove':
+        toast({
+          title: "Resource removed",
+          description: `${resource.title} has been removed from your saved resources.`,
+        });
+        break;
+    }
+  };
+
+  // Filter resources based on search query
+  const filteredRecommended = recommendedResources.filter(resource => 
+    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredSaved = savedResources.filter(resource => 
+    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredPremium = premiumResources.filter(resource => 
+    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <DashboardLayout userType="mentee">
@@ -116,7 +176,7 @@ const MenteeResources = () => {
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <Button>
+            <Button onClick={() => setActiveTab("recommended")}>
               <BookOpen className="mr-2 h-4 w-4" />
               Browse Library
             </Button>
@@ -153,9 +213,9 @@ const MenteeResources = () => {
                 <CardDescription>Materials suggested by your mentors</CardDescription>
               </CardHeader>
               <CardContent>
-                {recommendedResources.length > 0 ? (
+                {filteredRecommended.length > 0 ? (
                   <div className="space-y-4">
-                    {recommendedResources.map((resource) => (
+                    {filteredRecommended.map((resource) => (
                       <div key={resource.id} className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-start">
                           <div className="bg-echopurple-100 dark:bg-echopurple-900 p-2 rounded-md mr-4">
@@ -190,10 +250,17 @@ const MenteeResources = () => {
                                 {resource.mentor ? `Recommended by ${resource.mentor} • ` : ""} Added on {resource.date}
                               </div>
                               <div className="flex gap-2">
-                                <Button variant="outline" size="sm">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleResourceAction(resource, 'save')}
+                                >
                                   Save for Later
                                 </Button>
-                                <Button size="sm">
+                                <Button 
+                                  size="sm"
+                                  onClick={() => handleResourceAction(resource, resource.free ? 'download' : 'purchase')}
+                                >
                                   {resource.free ? (
                                     <>
                                       <Download className="h-4 w-4 mr-1" />
@@ -232,9 +299,9 @@ const MenteeResources = () => {
                 <CardDescription>Materials you've saved for later</CardDescription>
               </CardHeader>
               <CardContent>
-                {savedResources.length > 0 ? (
+                {filteredSaved.length > 0 ? (
                   <div className="space-y-4">
-                    {savedResources.map((resource) => (
+                    {filteredSaved.map((resource) => (
                       <div key={resource.id} className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-start">
                           <div className="bg-echopurple-100 dark:bg-echopurple-900 p-2 rounded-md mr-4">
@@ -264,20 +331,19 @@ const MenteeResources = () => {
                                 Saved on {resource.date}
                               </div>
                               <div className="flex gap-2">
-                                <Button variant="outline" size="sm">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleResourceAction(resource, 'remove')}
+                                >
                                   Remove
                                 </Button>
-                                <Button size="sm">
-                                  {resource.free ? (
-                                    <>
-                                      <Download className="h-4 w-4 mr-1" />
-                                      Download
-                                    </>
-                                  ) : (
-                                    <>
-                                      Purchase
-                                    </>
-                                  )}
+                                <Button 
+                                  size="sm"
+                                  onClick={() => handleResourceAction(resource, 'download')}
+                                >
+                                  <Download className="h-4 w-4 mr-1" />
+                                  Download
                                 </Button>
                               </div>
                             </div>
@@ -306,9 +372,9 @@ const MenteeResources = () => {
                 <CardDescription>High-quality resources to accelerate your growth</CardDescription>
               </CardHeader>
               <CardContent>
-                {premiumResources.length > 0 ? (
+                {filteredPremium.length > 0 ? (
                   <div className="grid gap-6 md:grid-cols-3">
-                    {premiumResources.map((resource) => (
+                    {filteredPremium.map((resource) => (
                       <div key={resource.id} className="border rounded-lg overflow-hidden">
                         <div className="h-40 bg-gradient-to-r from-echopurple-600 to-echoblue-600 relative">
                           <div className="absolute inset-0 flex items-center justify-center">
@@ -356,7 +422,10 @@ const MenteeResources = () => {
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="font-bold text-lg">{resource.price}</div>
-                            <Button size="sm">
+                            <Button 
+                              size="sm"
+                              onClick={() => handleResourceAction(resource, 'purchase')}
+                            >
                               Purchase
                             </Button>
                           </div>

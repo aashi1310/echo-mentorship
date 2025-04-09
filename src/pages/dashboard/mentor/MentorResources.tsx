@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Upload, ExternalLink, Search, Filter, Plus, BookOpen } from "lucide-react";
+import { FileText, Upload, ExternalLink, Search, Filter, Plus, BookOpen, Share2, Eye } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 // Sample data for resources
 const sharedResources = [
@@ -19,6 +20,7 @@ const sharedResources = [
     size: "2.4 MB",
     shared: 12,
     date: "Mar 15, 2023",
+    url: "/resources/tech-interview-questions.pdf"
   },
   {
     id: 2,
@@ -28,6 +30,7 @@ const sharedResources = [
     size: "1.8 MB",
     shared: 8,
     date: "Apr 2, 2023",
+    url: "/resources/career-transition.docx"
   },
   {
     id: 3,
@@ -37,6 +40,7 @@ const sharedResources = [
     size: "3.2 MB",
     shared: 15,
     date: "Feb 28, 2023",
+    url: "/resources/system-design.pdf"
   },
 ];
 
@@ -48,6 +52,7 @@ const personalResources = [
     type: "Document",
     size: "850 KB",
     date: "Jan 10, 2023",
+    url: "/resources/mentoring-best-practices.docx"
   },
   {
     id: 5,
@@ -56,6 +61,7 @@ const personalResources = [
     type: "Presentation",
     size: "4.1 MB",
     date: "Mar 25, 2023",
+    url: "/resources/leadership-slides.pptx"
   }
 ];
 
@@ -65,21 +71,21 @@ const externalResources = [
     id: 1,
     title: "Effective Communication in Tech Teams",
     source: "Tech Leadership Journal",
-    url: "#",
+    url: "https://techleadership.journal/articles/effective-communication",
     type: "Article",
   },
   {
     id: 2,
     title: "Advanced React Patterns",
     source: "Frontend Masters",
-    url: "#",
+    url: "https://frontendmasters.com/courses/advanced-react-patterns",
     type: "Course",
   },
   {
     id: 3,
     title: "Building Resilient Systems",
     source: "System Design Conference",
-    url: "#",
+    url: "https://systemdesignconf.io/videos/building-resilient-systems",
     type: "Video",
   },
 ];
@@ -87,6 +93,70 @@ const externalResources = [
 const MentorResources = () => {
   const [activeTab, setActiveTab] = useState("shared");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Function to handle resource actions
+  const handleResourceAction = (resource: any, action: 'view' | 'share' | 'download') => {
+    switch(action) {
+      case 'view':
+        // In a real app, this would open a detailed view
+        toast({
+          title: "Opening resource",
+          description: `Opening ${resource.title} for viewing.`,
+        });
+        if (resource.url) {
+          window.open(resource.url, '_blank');
+        }
+        break;
+      case 'share':
+        toast({
+          title: "Share with mentees",
+          description: `${resource.title} has been shared with selected mentees.`,
+        });
+        break;
+      case 'download':
+        toast({
+          title: "Download started",
+          description: `${resource.title} is being downloaded.`,
+        });
+        if (resource.url) {
+          window.open(resource.url, '_blank');
+        }
+        break;
+    }
+  };
+
+  // Handle external resource visit
+  const handleExternalResourceVisit = (resource: any) => {
+    toast({
+      title: "Visiting external resource",
+      description: `Opening ${resource.title} from ${resource.source}.`,
+    });
+    window.open(resource.url, '_blank');
+  };
+
+  // Handle upload
+  const handleUpload = () => {
+    toast({
+      title: "Upload Resource",
+      description: "The upload dialog would open here in a real application.",
+    });
+  };
+
+  // Filter resources based on search query
+  const filteredShared = sharedResources.filter(resource => 
+    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredPersonal = personalResources.filter(resource => 
+    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredExternal = externalResources.filter(resource => 
+    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    resource.source.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <DashboardLayout userType="mentor">
@@ -99,7 +169,7 @@ const MentorResources = () => {
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <Button>
+            <Button onClick={handleUpload}>
               <Upload className="mr-2 h-4 w-4" />
               Upload New Resource
             </Button>
@@ -136,9 +206,9 @@ const MentorResources = () => {
                 <CardDescription>Resources you've shared with your mentees</CardDescription>
               </CardHeader>
               <CardContent>
-                {sharedResources.length > 0 ? (
+                {filteredShared.length > 0 ? (
                   <div className="space-y-4">
-                    {sharedResources.map((resource) => (
+                    {filteredShared.map((resource) => (
                       <div key={resource.id} className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-start">
                           <div className="bg-echopurple-100 dark:bg-echopurple-900 p-2 rounded-md mr-4">
@@ -160,10 +230,19 @@ const MentorResources = () => {
                                 Shared with {resource.shared} mentees • Uploaded on {resource.date}
                               </div>
                               <div className="flex gap-2">
-                                <Button variant="outline" size="sm">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  onClick={() => handleResourceAction(resource, 'share')}
+                                >
+                                  <Share2 className="h-4 w-4 mr-1" />
                                   Share
                                 </Button>
-                                <Button size="sm">
+                                <Button 
+                                  size="sm"
+                                  onClick={() => handleResourceAction(resource, 'view')}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
                                   View
                                 </Button>
                               </div>
@@ -180,7 +259,7 @@ const MentorResources = () => {
                     <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-sm">
                       You haven't shared any resources with your mentees yet.
                     </p>
-                    <Button className="mt-4">
+                    <Button className="mt-4" onClick={handleUpload}>
                       Upload Resource
                     </Button>
                   </div>
@@ -196,9 +275,9 @@ const MentorResources = () => {
                 <CardDescription>Private resources for your own reference</CardDescription>
               </CardHeader>
               <CardContent>
-                {personalResources.length > 0 ? (
+                {filteredPersonal.length > 0 ? (
                   <div className="space-y-4">
-                    {personalResources.map((resource) => (
+                    {filteredPersonal.map((resource) => (
                       <div key={resource.id} className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-start">
                           <div className="bg-echopurple-100 dark:bg-echopurple-900 p-2 rounded-md mr-4">
@@ -220,10 +299,19 @@ const MentorResources = () => {
                                 Uploaded on {resource.date}
                               </div>
                               <div className="flex gap-2">
-                                <Button variant="outline" size="sm">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleResourceAction(resource, 'share')}
+                                >
+                                  <Share2 className="h-4 w-4 mr-1" />
                                   Share
                                 </Button>
-                                <Button size="sm">
+                                <Button 
+                                  size="sm"
+                                  onClick={() => handleResourceAction(resource, 'view')}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
                                   View
                                 </Button>
                               </div>
@@ -240,7 +328,7 @@ const MentorResources = () => {
                     <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-sm">
                       You haven't uploaded any personal resources yet.
                     </p>
-                    <Button className="mt-4">
+                    <Button className="mt-4" onClick={handleUpload}>
                       Upload Resource
                     </Button>
                   </div>
@@ -261,9 +349,9 @@ const MentorResources = () => {
                 </Button>
               </CardHeader>
               <CardContent>
-                {externalResources.length > 0 ? (
+                {filteredExternal.length > 0 ? (
                   <div className="space-y-4">
-                    {externalResources.map((resource) => (
+                    {filteredExternal.map((resource) => (
                       <div key={resource.id} className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex items-start">
                           <div className="bg-echopurple-100 dark:bg-echopurple-900 p-2 rounded-md mr-4">
@@ -278,7 +366,11 @@ const MentorResources = () => {
                               From: {resource.source}
                             </p>
                             <div className="flex items-center justify-end mt-4">
-                              <Button variant="outline" size="sm">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleExternalResourceVisit(resource)}
+                              >
                                 <ExternalLink className="h-4 w-4 mr-1" /> Visit Resource
                               </Button>
                             </div>
