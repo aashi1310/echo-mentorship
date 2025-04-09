@@ -30,20 +30,22 @@ const MentorProfile = () => {
     }
   };
   
-  const handleRemoveSkill = (skill) => {
+  const handleRemoveSkill = (skill: string) => {
     setExpertise(expertise.filter(s => s !== skill));
   };
   
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileImage(e.target.result);
-        toast({
-          title: "Profile Picture Updated",
-          description: "Your profile picture has been successfully updated.",
-        });
+        if (e.target?.result) {
+          setProfileImage(e.target.result.toString());
+          toast({
+            title: "Profile Picture Updated",
+            description: "Your profile picture has been successfully updated.",
+          });
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -93,10 +95,12 @@ const MentorProfile = () => {
                     A professional photo is recommended. Maximum size 2MB.
                   </p>
                   <label htmlFor="profile-upload">
-                    <Button variant="outline" size="sm" as="span" className="cursor-pointer">
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload New Picture
-                    </Button>
+                    <div className="cursor-pointer">
+                      <Button variant="outline" size="sm" className="cursor-pointer">
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload New Picture
+                      </Button>
+                    </div>
                     <input 
                       id="profile-upload" 
                       type="file" 

@@ -1,89 +1,134 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/hooks/use-toast";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { CalendarIcon, Plus, X } from "lucide-react";
+
+interface Milestone {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+interface Goal {
+  id?: number;
+  title: string;
+  description: string;
+  category: string;
+  progress: number;
+  startDate: Date;
+  targetDate: Date;
+  status: string;
+  milestones: Milestone[];
+}
 
 interface CreateGoalDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (goal: any) => void;
-  editGoal?: {
-    id: number;
-    title: string;
-    description: string;
-    progress: number;
-    category: string;
-    targetDate: string;
-  };
+  onSave: (goal: Goal) => void;
+  existingGoal?: Goal | null;
 }
 
-const CreateGoalDialog = ({ 
-  open, 
-  onOpenChange, 
-  onSave, 
-  editGoal 
-}: CreateGoalDialogProps) => {
-  const [title, setTitle] = useState(editGoal?.title || "");
-  const [description, setDescription] = useState(editGoal?.description || "");
-  const [progress, setProgress] = useState(editGoal?.progress || 0);
-  const [category, setCategory] = useState(editGoal?.category || "career");
-  const [targetDate, setTargetDate] = useState(editGoal?.targetDate || "");
+const categories = [
+  "Education",
+  "Career",
+  "Portfolio",
+  "Skill Development",
+  "Personal",
+  "Networking",
+  "Industry Knowledge",
+  "Interview Preparation",
+];
 
-  const isEditing = !!editGoal;
+const CreateGoalDialog = ({ open, onOpenChange, onSave, existingGoal }: CreateGoalDialogProps) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("Education");
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [targetDate, setTargetDate] = useState<Date>(new Date());
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [newMilestone, setNewMilestone] = useState("");
+
+  useEffect(() => {
+    if (existingGoal) {
+      setTitle(existingGoal.title);
+      setDescription(existingGoal.description);
+      setCategory(existingGoal.category);
+      setStartDate(new Date(existingGoal.startDate));
+      setTargetDate(new Date(existingGoal.targetDate));
+      setMilestones(existingGoal.milestones);
+    } else {
+      resetForm();
+    }
+  }, [existingGoal, open]);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setCategory("Education");
+    setStartDate(new Date());
+    setTargetDate(new Date(new Date().setMonth(new Date().getMonth() + 1)));
+    setMilestones([]);
+    setNewMilestone("");
+  };
+
+  const handleAddMilestone = () => {
+    if (newMilestone.trim()) {
+      const newId = milestones.length > 0 
+        ? Math.max(...milestones.map(m => m.id)) + 1 
+        : 1;
+      setMilestones([...milestones, { id: newId, title: newMilestone.trim(), completed: false }]);
+      setNewMilestone("");
+    }
+  };
+
+  const handleRemoveMilestone = (id: number) => {
+    setMilestones(milestones.filter(m => m.id !== id));
+  };
 
   const handleSubmit = () => {
     if (!title.trim()) {
-      toast({
-        title: "Title Required",
-        description: "Please enter a title for your goal.",
-        variant: "destructive",
-      });
+      alert("Please enter a goal title");
       return;
     }
 
-    if (!targetDate) {
-      toast({
-        title: "Target Date Required",
-        description: "Please set a target date for your goal.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const newGoal = {
-      id: editGoal?.id || Date.now(),
+    const goal: Goal = {
+      id: existingGoal?.id,
       title,
       description,
-      progress,
       category,
+      progress: existingGoal?.progress || 0,
+      startDate,
       targetDate,
+      status: existingGoal?.status || "not-started",
+      milestones,
     };
 
-    onSave(newGoal);
-    toast({
-      title: isEditing ? "Goal Updated" : "Goal Created",
-      description: isEditing 
-        ? "Your goal has been successfully updated." 
-        : "Your new goal has been created successfully.",
-    });
-    onOpenChange(false);
+    onSave(goal);
+    if (!existingGoal) resetForm();
+  };
+
+  const formatDate = (date: Date | undefined) => {
+    if (!date) return "";
+    return format(date, "PPP");
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Goal" : "Create New Goal"}</DialogTitle>
+          <DialogTitle>{existingGoal ? "Edit Goal" : "Create New Goal"}</DialogTitle>
           <DialogDescription>
-            {isEditing 
-              ? "Update your professional development goal" 
-              : "Set a new professional development goal to track your progress"}
+            {existingGoal 
+              ? "Update the details of your existing goal" 
+              : "Set a new goal to track your progress"}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -91,17 +136,17 @@ const CreateGoalDialog = ({
             <Label htmlFor="title">Goal Title</Label>
             <Input
               id="title"
-              placeholder="E.g., Master System Design"
+              placeholder="Enter a clear, specific goal"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
           
           <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Description (Optional)</Label>
             <Textarea
               id="description"
-              placeholder="Describe your goal in more detail..."
+              placeholder="Add more details about your goal..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -110,50 +155,122 @@ const CreateGoalDialog = ({
           
           <div className="grid gap-2">
             <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={setCategory}>
+            <Select defaultValue={category} onValueChange={setCategory}>
               <SelectTrigger id="category">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="career">Career Development</SelectItem>
-                <SelectItem value="technical">Technical Skills</SelectItem>
-                <SelectItem value="leadership">Leadership</SelectItem>
-                <SelectItem value="communication">Communication</SelectItem>
-                <SelectItem value="personal">Personal Growth</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
           
-          <div className="grid gap-2">
-            <Label htmlFor="targetDate">Target Completion Date</Label>
-            <Input
-              id="targetDate"
-              type="date"
-              value={targetDate}
-              onChange={(e) => setTargetDate(e.target.value)}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label>Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formatDate(startDate)}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label>Target Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formatDate(targetDate)}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={targetDate}
+                    onSelect={setTargetDate}
+                    initialFocus
+                    disabled={(date) => date < startDate}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           
-          {isEditing && (
-            <div className="grid gap-2">
-              <div className="flex justify-between">
-                <Label htmlFor="progress">Current Progress</Label>
-                <span className="text-sm font-medium">{progress}%</span>
+          <div className="grid gap-2">
+            <Label>Milestones</Label>
+            <div className="space-y-3">
+              {milestones.length > 0 && (
+                <div className="space-y-2 border rounded-md p-3">
+                  {milestones.map((milestone) => (
+                    <div key={milestone.id} className="flex items-center justify-between">
+                      <span className="text-sm">{milestone.title}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-destructive"
+                        onClick={() => handleRemoveMilestone(milestone.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add a milestone..."
+                  value={newMilestone}
+                  onChange={(e) => setNewMilestone(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddMilestone();
+                    }
+                  }}
+                  className="flex-1"
+                />
+                <Button type="button" onClick={handleAddMilestone}>
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
               </div>
-              <Slider
-                id="progress"
-                min={0}
-                max={100}
-                step={5}
-                value={[progress]}
-                onValueChange={(value) => setProgress(value[0])}
-              />
             </div>
-          )}
+          </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSubmit}>{isEditing ? "Update Goal" : "Create Goal"}</Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              resetForm();
+              onOpenChange(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit}>
+            {existingGoal ? "Update Goal" : "Create Goal"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -11,18 +11,19 @@ const GoogleMeetRedirect = () => {
   const navigate = useNavigate();
   const { sessionId } = useParams();
   
-  // Generate a valid Google Meet link with correct meeting code format (3 groups of 4 characters)
+  // Generate a valid Google Meet link with correct meeting code format (10 characters)
   const generateMeetCode = () => {
     const chars = 'abcdefghijklmnopqrstuvwxyz';
     let code = '';
     
-    // Generate 3 groups of 4 characters separated by hyphens
-    for (let group = 0; group < 3; group++) {
-      for (let i = 0; i < 4; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        code += chars[randomIndex];
-      }
-      if (group < 2) code += '-';
+    // First character must be a letter
+    code += chars[Math.floor(Math.random() * chars.length)];
+    
+    // Remaining 9 characters can be letters or numbers
+    const allChars = chars + '0123456789';
+    for (let i = 0; i < 9; i++) {
+      const randomIndex = Math.floor(Math.random() * allChars.length);
+      code += allChars[randomIndex];
     }
     
     return code;
@@ -43,7 +44,7 @@ const GoogleMeetRedirect = () => {
   };
   
   useEffect(() => {
-    let timer: number;
+    let timer: number | undefined;
     
     // Countdown timer for auto-redirect
     if (countdown > 0) {

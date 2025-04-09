@@ -11,6 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, AtSign, MapPin, Phone, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
+interface ResumeFile {
+  name: string;
+  uploadDate: string;
+  size: string;
+  file: File | null;
+}
+
 const MenteeProfile = () => {
   const [profileImage, setProfileImage] = useState("/placeholder.svg");
   const [name, setName] = useState("Priya Sharma");
@@ -22,7 +29,7 @@ const MenteeProfile = () => {
   const [languages, setLanguages] = useState("English, Hindi, Kannada");
   const [interests, setInterests] = useState(["Product Management", "UX Research", "Analytics", "Leadership"]);
   const [newInterest, setNewInterest] = useState("");
-  const [resumeFile, setResumeFile] = useState({
+  const [resumeFile, setResumeFile] = useState<ResumeFile>({
     name: "Resume_Priya_Sharma.pdf",
     uploadDate: "Apr 5, 2023",
     size: "1.2 MB",
@@ -36,27 +43,29 @@ const MenteeProfile = () => {
     }
   };
   
-  const handleRemoveInterest = (interest) => {
+  const handleRemoveInterest = (interest: string) => {
     setInterests(interests.filter(i => i !== interest));
   };
   
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileImage(e.target.result);
-        toast({
-          title: "Profile Picture Updated",
-          description: "Your profile picture has been successfully updated.",
-        });
+        if (e.target?.result) {
+          setProfileImage(e.target.result.toString());
+          toast({
+            title: "Profile Picture Updated",
+            description: "Your profile picture has been successfully updated.",
+          });
+        }
       };
       reader.readAsDataURL(file);
     }
   };
   
-  const handleResumeUpload = (e) => {
-    const file = e.target.files[0];
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       // Convert file size to MB
       const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
@@ -91,6 +100,20 @@ const MenteeProfile = () => {
       description: "Your personal information has been successfully updated.",
     });
   };
+  
+  const viewDocument = () => {
+    if (resumeFile.file) {
+      // Create a URL for the file and open it in a new tab
+      const url = URL.createObjectURL(resumeFile.file);
+      window.open(url, '_blank');
+    } else {
+      toast({
+        title: "Unable to View",
+        description: "This is a placeholder. Upload a real document to view it.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <DashboardLayout userType="mentee">
@@ -122,10 +145,12 @@ const MenteeProfile = () => {
                     A professional photo is recommended. Maximum size 2MB.
                   </p>
                   <label htmlFor="profile-upload">
-                    <Button variant="outline" size="sm" as="span" className="cursor-pointer">
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload New Picture
-                    </Button>
+                    <div className="cursor-pointer">
+                      <Button variant="outline" size="sm" className="cursor-pointer">
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload New Picture
+                      </Button>
+                    </div>
                     <input 
                       id="profile-upload" 
                       type="file" 
@@ -297,26 +322,16 @@ const MenteeProfile = () => {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => {
-                          if (resumeFile.file) {
-                            // Create a URL for the file and open it in a new tab
-                            const url = URL.createObjectURL(resumeFile.file);
-                            window.open(url, '_blank');
-                          } else {
-                            toast({
-                              title: "Unable to View",
-                              description: "This is a placeholder. Upload a real document to view it.",
-                              variant: "destructive",
-                            });
-                          }
-                        }}
+                        onClick={viewDocument}
                       >
                         View
                       </Button>
                       <label htmlFor="resume-replace">
-                        <Button variant="outline" size="sm" as="span" className="cursor-pointer">
-                          Replace
-                        </Button>
+                        <div className="cursor-pointer">
+                          <Button variant="outline" size="sm" className="cursor-pointer">
+                            Replace
+                          </Button>
+                        </div>
                         <input 
                           id="resume-replace" 
                           type="file" 
@@ -329,10 +344,12 @@ const MenteeProfile = () => {
                   </div>
                 </div>
                 <label htmlFor="document-upload">
-                  <Button variant="outline" className="w-full cursor-pointer">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload New Document
-                  </Button>
+                  <div className="w-full cursor-pointer">
+                    <Button variant="outline" className="w-full cursor-pointer">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload New Document
+                    </Button>
+                  </div>
                   <input 
                     id="document-upload" 
                     type="file" 

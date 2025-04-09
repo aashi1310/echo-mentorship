@@ -5,100 +5,123 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, CheckCircle, Clock, Edit, Plus, Target, Trash2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CalendarClock, CheckCircle, Circle, Edit, Plus, Trash2 } from "lucide-react";
+import { format } from "date-fns";
 import CreateGoalDialog from "@/components/CreateGoalDialog";
 
-// Sample goals data
-const initialGoals = [
+// Sample data for goals
+const goalsData = [
   {
     id: 1,
-    title: "Master System Design",
-    description: "Learn and practice advanced system design concepts for technical interviews",
-    progress: 60,
-    category: "technical",
-    targetDate: "2025-07-15"
+    title: "Complete Product Management Certification",
+    description: "Finish the Google Product Management Professional Certificate on Coursera",
+    category: "Education",
+    progress: 75,
+    startDate: new Date("2023-03-15"),
+    targetDate: new Date("2023-06-15"),
+    status: "in-progress",
+    milestones: [
+      { id: 1, title: "Complete Module 1: Introduction to Product Management", completed: true },
+      { id: 2, title: "Complete Module 2: Product Strategy", completed: true },
+      { id: 3, title: "Complete Module 3: Product Development Process", completed: true },
+      { id: 4, title: "Complete Module 4: Product Launch", completed: false },
+    ],
   },
   {
     id: 2,
-    title: "Product Management Skills",
-    description: "Improve product management skills through mentorship and practical application",
-    progress: 45,
-    category: "career",
-    targetDate: "2025-08-30"
+    title: "Gain Interview Confidence",
+    description: "Complete 10 mock interviews with feedback",
+    category: "Career",
+    progress: 30,
+    startDate: new Date("2023-04-01"),
+    targetDate: new Date("2023-07-01"),
+    status: "in-progress",
+    milestones: [
+      { id: 1, title: "Complete 3 behavioral mock interviews", completed: true },
+      { id: 2, title: "Complete 3 technical mock interviews", completed: false },
+      { id: 3, title: "Complete 4 case study interviews", completed: false },
+    ],
   },
   {
     id: 3,
-    title: "Interview Preparation",
-    description: "Prepare for product management interviews with mock sessions",
-    progress: 25,
-    category: "career",
-    targetDate: "2025-05-20"
-  }
+    title: "Build Product Portfolio",
+    description: "Create 3 case studies showcasing product management skills",
+    category: "Portfolio",
+    progress: 10,
+    startDate: new Date("2023-05-01"),
+    targetDate: new Date("2023-08-15"),
+    status: "in-progress",
+    milestones: [
+      { id: 1, title: "Identify 3 projects for case studies", completed: true },
+      { id: 2, title: "Complete first case study", completed: false },
+      { id: 3, title: "Complete second case study", completed: false },
+      { id: 4, title: "Complete third case study", completed: false },
+    ],
+  },
 ];
 
 const MenteeGoals = () => {
-  const [goals, setGoals] = useState(initialGoals);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [editingGoal, setEditingGoal] = useState(null);
-  
-  const handleUpdateProgress = (goalId, newProgress) => {
-    setGoals(goals.map(goal => 
-      goal.id === goalId ? { ...goal, progress: newProgress } : goal
-    ));
-    toast({
-      title: "Progress Updated",
-      description: `Goal progress has been updated to ${newProgress}%.`,
-    });
+  const [goals, setGoals] = useState(goalsData);
+  const [showCreateGoal, setShowCreateGoal] = useState(false);
+  const [currentTab, setCurrentTab] = useState("all");
+  const [editingGoalId, setEditingGoalId] = useState<number | null>(null);
+
+  const handleMilestoneToggle = (goalId: number, milestoneId: number) => {
+    setGoals(goals.map(goal => {
+      if (goal.id === goalId) {
+        const updatedMilestones = goal.milestones.map(milestone => {
+          if (milestone.id === milestoneId) {
+            return { ...milestone, completed: !milestone.completed };
+          }
+          return milestone;
+        });
+        
+        // Calculate new progress
+        const completedCount = updatedMilestones.filter(m => m.completed).length;
+        const progress = Math.round((completedCount / updatedMilestones.length) * 100);
+        
+        return { ...goal, milestones: updatedMilestones, progress };
+      }
+      return goal;
+    }));
   };
-  
-  const handleSaveGoal = (newGoal) => {
-    if (editingGoal) {
-      // Update existing goal
-      setGoals(goals.map(goal => 
-        goal.id === newGoal.id ? newGoal : goal
-      ));
-    } else {
-      // Add new goal
-      setGoals([...goals, newGoal]);
-    }
-    setEditingGoal(null);
+
+  const handleCreateGoal = (newGoal) => {
+    const maxId = Math.max(...goals.map(g => g.id));
+    setGoals([...goals, { ...newGoal, id: maxId + 1 }]);
+    setShowCreateGoal(false);
   };
-  
-  const handleEditGoal = (goal) => {
-    setEditingGoal(goal);
-    setShowCreateDialog(true);
+
+  const handleEditGoal = (goalId: number) => {
+    setEditingGoalId(goalId);
+    setShowCreateGoal(true);
   };
-  
-  const handleDeleteGoal = (goalId) => {
+
+  const handleUpdateGoal = (updatedGoal) => {
+    setGoals(goals.map(goal => goal.id === updatedGoal.id ? updatedGoal : goal));
+    setEditingGoalId(null);
+    setShowCreateGoal(false);
+  };
+
+  const handleDeleteGoal = (goalId: number) => {
     setGoals(goals.filter(goal => goal.id !== goalId));
-    toast({
-      title: "Goal Deleted",
-      description: "The goal has been successfully deleted.",
-    });
   };
-  
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case "technical":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "career":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
-      case "leadership":
-        return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300";
-      case "communication":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "personal":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+
+  const getFilteredGoals = () => {
+    switch (currentTab) {
+      case "in-progress":
+        return goals.filter(goal => goal.progress > 0 && goal.progress < 100);
+      case "completed":
+        return goals.filter(goal => goal.progress === 100);
+      case "not-started":
+        return goals.filter(goal => goal.progress === 0);
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+        return goals;
     }
   };
-  
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
-  };
+
+  const editingGoal = editingGoalId ? goals.find(g => g.id === editingGoalId) : null;
 
   return (
     <DashboardLayout userType="mentee">
@@ -107,13 +130,13 @@ const MenteeGoals = () => {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">My Goals</h1>
             <p className="text-gray-500 dark:text-gray-400">
-              Track and manage your professional development goals
+              Track your progress towards your career and learning goals
             </p>
           </div>
           <div className="mt-4 md:mt-0">
             <Button onClick={() => {
-              setEditingGoal(null);
-              setShowCreateDialog(true);
+              setEditingGoalId(null);
+              setShowCreateGoal(true);
             }}>
               <Plus className="mr-2 h-4 w-4" />
               Create New Goal
@@ -121,119 +144,130 @@ const MenteeGoals = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {goals.map((goal) => (
-            <Card key={goal.id} className="relative">
-              <div className="absolute top-4 right-4 flex gap-2">
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => handleEditGoal(goal)}
-                  className="h-8 w-8"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => handleDeleteGoal(goal.id)}
-                  className="h-8 w-8 text-destructive hover:text-destructive/90"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <Badge className={`${getCategoryColor(goal.category)}`}>
-                    {goal.category.charAt(0).toUpperCase() + goal.category.slice(1)}
-                  </Badge>
-                </div>
-                <CardTitle className="mt-2">{goal.title}</CardTitle>
-                <CardDescription className="line-clamp-2">
-                  {goal.description}
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Progress</span>
-                  <span className="text-sm font-medium">{goal.progress}%</span>
-                </div>
-                <Progress value={goal.progress} className="h-2" />
-                
-                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  <Target className="mr-1 h-4 w-4" />
-                  <span>Target: {formatDate(goal.targetDate)}</span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleUpdateProgress(goal.id, Math.max(0, goal.progress - 10))}
-                      disabled={goal.progress <= 0}
-                    >
-                      -10%
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleUpdateProgress(goal.id, Math.min(100, goal.progress + 10))}
-                      disabled={goal.progress >= 100}
-                    >
-                      +10%
-                    </Button>
-                  </div>
-                  
-                  {goal.progress === 100 && (
-                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 flex items-center gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      <span>Completed</span>
-                    </Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <Tabs defaultValue="all" value={currentTab} onValueChange={setCurrentTab}>
+          <TabsList>
+            <TabsTrigger value="all">All Goals</TabsTrigger>
+            <TabsTrigger value="in-progress">In Progress</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
+            <TabsTrigger value="not-started">Not Started</TabsTrigger>
+          </TabsList>
           
-          <Card className="flex flex-col items-center justify-center p-6 border-dashed cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            onClick={() => {
-              setEditingGoal(null);
-              setShowCreateDialog(true);
-            }}
-          >
-            <div className="rounded-full bg-primary/10 p-3 mb-4">
-              <Plus className="h-6 w-6 text-primary" />
+          <TabsContent value={currentTab} className="mt-6">
+            <div className="space-y-6">
+              {getFilteredGoals().length > 0 ? (
+                getFilteredGoals().map(goal => (
+                  <Card key={goal.id}>
+                    <CardHeader className="pb-3">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <CardTitle className="text-xl flex items-center">
+                            {goal.title}
+                            <Badge 
+                              variant="outline" 
+                              className="ml-2 text-xs"
+                            >
+                              {goal.category}
+                            </Badge>
+                          </CardTitle>
+                          <CardDescription>
+                            {goal.description}
+                          </CardDescription>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 w-8 p-0"
+                            onClick={() => handleEditGoal(goal.id)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 w-8 p-0 text-destructive border-destructive"
+                            onClick={() => handleDeleteGoal(goal.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center text-sm text-gray-500 dark:text-gray-400 gap-y-1 gap-x-4">
+                          <div className="flex items-center">
+                            <CalendarClock className="mr-1 h-4 w-4" />
+                            <span>Start: {format(goal.startDate, "MMM d, yyyy")}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <CalendarClock className="mr-1 h-4 w-4" />
+                            <span>Target: {format(goal.targetDate, "MMM d, yyyy")}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Progress</span>
+                          <span>{goal.progress}%</span>
+                        </div>
+                        <Progress value={goal.progress} />
+                      </div>
+                    </CardHeader>
+                    
+                    <CardContent>
+                      <h4 className="text-sm font-medium mb-3">Milestones</h4>
+                      <ul className="space-y-2">
+                        {goal.milestones.map(milestone => (
+                          <li 
+                            key={milestone.id} 
+                            className="flex items-start gap-2"
+                            onClick={() => handleMilestoneToggle(goal.id, milestone.id)}
+                          >
+                            {milestone.completed ? (
+                              <CheckCircle className="h-5 w-5 text-primary cursor-pointer mt-0.5" />
+                            ) : (
+                              <Circle className="h-5 w-5 text-gray-400 cursor-pointer mt-0.5" />
+                            )}
+                            <span className={`flex-1 ${milestone.completed ? 'line-through text-gray-500' : ''}`}>
+                              {milestone.title}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="text-center py-12 border rounded-lg">
+                  <h3 className="text-lg font-medium mb-2">No Goals Found</h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">
+                    {currentTab === "all" 
+                      ? "You haven't created any goals yet." 
+                      : `You don't have any ${currentTab.replace('-', ' ')} goals.`}
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setEditingGoalId(null);
+                      setShowCreateGoal(true);
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Your First Goal
+                  </Button>
+                </div>
+              )}
             </div>
-            <h3 className="font-medium text-lg mb-2">Add New Goal</h3>
-            <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-              Create a new professional development goal to track your progress
-            </p>
-          </Card>
-        </div>
-        
-        {goals.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Target className="h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium">No Goals Set</h3>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 max-w-md">
-              You haven't set any professional development goals yet. Create your first goal to start tracking your progress.
-            </p>
-            <Button className="mt-4" onClick={() => setShowCreateDialog(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Your First Goal
-            </Button>
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
       </div>
-      
+
       <CreateGoalDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-        onSave={handleSaveGoal}
-        editGoal={editingGoal}
+        open={showCreateGoal}
+        onOpenChange={setShowCreateGoal}
+        onSave={editingGoal ? handleUpdateGoal : handleCreateGoal}
+        existingGoal={editingGoal}
       />
     </DashboardLayout>
   );
