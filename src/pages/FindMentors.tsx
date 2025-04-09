@@ -244,7 +244,7 @@ const FindMentors = () => {
                 <SelectValue placeholder="Field of Expertise" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Fields</SelectItem>
+                <SelectItem value="all">All Fields</SelectItem>
                 <SelectItem value="software">Software Development</SelectItem>
                 <SelectItem value="design">Design</SelectItem>
                 <SelectItem value="product">Product Management</SelectItem>
@@ -259,7 +259,7 @@ const FindMentors = () => {
                 <SelectValue placeholder="Price Range" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Prices</SelectItem>
+                <SelectItem value="all">All Prices</SelectItem>
                 <SelectItem value="low">Budget (≤₹1500)</SelectItem>
                 <SelectItem value="medium">Mid-Range (₹1600-₹1900)</SelectItem>
                 <SelectItem value="high">Premium (≥₹2000)</SelectItem>
@@ -271,7 +271,7 @@ const FindMentors = () => {
                 <SelectValue placeholder="Availability" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Time</SelectItem>
+                <SelectItem value="all">Any Time</SelectItem>
                 <SelectItem value="weekends">Weekends</SelectItem>
                 <SelectItem value="evenings">Weekday Evenings</SelectItem>
                 <SelectItem value="flexible">Flexible</SelectItem>

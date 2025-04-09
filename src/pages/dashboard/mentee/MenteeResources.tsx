@@ -1,445 +1,334 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FileText, Download, ExternalLink, Search, Filter, BookOpen } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Search, Download, FileText, Video, ExternalLink, Share2, Bookmark, BookmarkCheck } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-// Sample data for resources
-const recommendedResources = [
-  {
-    id: 1,
-    title: "The Ultimate Interview Preparation Guide",
-    description: "A comprehensive guide to ace your product management interviews.",
-    type: "PDF",
-    size: "2.4 MB",
-    free: true,
-    recommended: true,
-    mentor: "Rajat Kumar",
-    date: "Apr 5, 2023",
-    url: "/resources/interview-guide.pdf" // Added real URL
-  },
-  {
-    id: 2,
-    title: "Advanced React Patterns Course",
-    description: "Learn advanced React patterns used in professional applications.",
-    type: "Video Course",
-    size: "650 MB",
-    free: false,
-    price: "₹1,499",
-    recommended: true,
-    mentor: "Meera Patel",
-    date: "Mar 28, 2023",
-    url: "/resources/react-patterns.mp4" // Added real URL
-  },
-  {
-    id: 3,
-    title: "Effective Communication in Tech Teams",
-    description: "Improve your communication skills in technical environments.",
-    type: "Article",
-    size: "1.2 MB",
-    free: true,
-    recommended: false,
-    date: "Apr 2, 2023",
-    url: "/resources/tech-communication.pdf" // Added real URL
-  },
-];
-
-const savedResources = [
-  {
-    id: 4,
-    title: "Product Management Fundamentals",
-    description: "Core concepts every aspiring product manager should know.",
-    type: "eBook",
-    size: "5.8 MB",
-    free: true,
-    date: "Mar 15, 2023",
-    url: "/resources/pm-fundamentals.pdf" // Added real URL
-  },
-  {
-    id: 5,
-    title: "Resume & Cover Letter Templates",
-    description: "Professional templates for job applications.",
-    type: "ZIP Archive",
-    size: "8.2 MB",
-    free: true,
-    date: "Mar 20, 2023",
-    url: "/resources/resume-templates.zip" // Added real URL
-  }
-];
-
-// Sample data for premium content
-const premiumResources = [
-  {
-    id: 6,
-    title: "Product Manager Interview Masterclass",
-    description: "Premium video course covering all aspects of PM interviews.",
-    type: "Video Course",
-    duration: "8 hours",
-    price: "₹2,999",
-    rating: 4.9,
-    reviews: 128,
-    url: "/resources/pm-masterclass.mp4" // Added real URL
-  },
-  {
-    id: 7,
-    title: "Career Transition Blueprint",
-    description: "Step-by-step guide to successfully switch careers.",
-    type: "Interactive Guide",
-    duration: "Self-paced",
-    price: "₹1,799",
-    rating: 4.7,
-    reviews: 86,
-    url: "/resources/career-blueprint.pdf" // Added real URL
-  },
-  {
-    id: 8,
-    title: "The Product Leadership Toolkit",
-    description: "Resources, templates and strategies for aspiring product leaders.",
-    type: "Resource Pack",
-    items: "25+ resources",
-    price: "₹1,299",
-    rating: 4.8,
-    reviews: 74,
-    url: "/resources/leadership-toolkit.zip" // Added real URL
-  },
-];
+interface Resource {
+  id: number;
+  title: string;
+  description: string;
+  type: string;
+  size: string;
+  free: boolean;
+  date: string;
+  url: string;
+}
 
 const MenteeResources = () => {
-  const [activeTab, setActiveTab] = useState("recommended");
+  const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [savedResources, setSavedResources] = useState<number[]>([]);
+  const { toast } = useToast();
 
-  // Function to handle download or purchase
-  const handleResourceAction = (resource: any, action: 'download' | 'save' | 'purchase' | 'remove') => {
-    switch(action) {
-      case 'download':
-        // In a real app, this would be a real download function
-        toast({
-          title: "Download started",
-          description: `${resource.title} is being downloaded.`,
-        });
-        // Simulate download with window.open
-        if (resource.url) {
-          window.open(resource.url, '_blank');
-        }
-        break;
-      case 'save':
-        toast({
-          title: "Resource saved",
-          description: `${resource.title} has been saved to your collection.`,
-        });
-        break;
-      case 'purchase':
-        toast({
-          title: "Redirecting to payment",
-          description: `You're being redirected to complete your purchase of ${resource.title}.`,
-        });
-        break;
-      case 'remove':
-        toast({
-          title: "Resource removed",
-          description: `${resource.title} has been removed from your saved resources.`,
-        });
-        break;
+  // Sample data for resources
+  const resources: Resource[] = [
+    {
+      id: 1,
+      title: "Effective Career Transition Guide",
+      description: "A comprehensive guide on how to navigate career transitions successfully",
+      type: "PDF",
+      size: "4.2 MB",
+      free: true,
+      date: "Apr 2, 2023",
+      url: "https://example.com/effective-career-transition-guide.pdf"
+    },
+    {
+      id: 2,
+      title: "Technical Interview Preparation Kit",
+      description: "Collection of resources to help you ace technical interviews",
+      type: "ZIP",
+      size: "15 MB",
+      free: false,
+      date: "Mar 15, 2023",
+      url: "https://example.com/technical-interview-preparation-kit.zip"
+    },
+    {
+      id: 3,
+      title: "Mastering Product Management",
+      description: "Learn essential product management skills from industry experts",
+      type: "PDF",
+      size: "6.8 MB",
+      free: true,
+      date: "Feb 28, 2023",
+      url: "https://example.com/mastering-product-management.pdf"
+    },
+    {
+      id: 4,
+      title: "Building Your Personal Brand",
+      description: "Workshop on developing and promoting your personal brand",
+      type: "Video",
+      size: "320 MB",
+      free: false,
+      date: "Feb 12, 2023",
+      url: "https://example.com/building-personal-brand-workshop.mp4"
+    },
+    {
+      id: 5,
+      title: "Leadership Skills Assessment",
+      description: "Self-assessment tools to evaluate your leadership capabilities",
+      type: "XLSX",
+      size: "2.1 MB",
+      free: true,
+      date: "Jan 30, 2023",
+      url: "https://example.com/leadership-skills-assessment.xlsx"
+    },
+    {
+      id: 6,
+      title: "Networking for Introverts",
+      description: "Strategies and tactics for effective networking for introverted personalities",
+      type: "PDF",
+      size: "3.5 MB",
+      free: false,
+      date: "Jan 18, 2023",
+      url: "https://example.com/networking-for-introverts.pdf"
+    },
+  ];
+
+  // Filter resources based on search query and active tab
+  const filteredResources = resources.filter(resource => {
+    const matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         resource.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         resource.type.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (activeTab === "all") return matchesSearch;
+    if (activeTab === "free") return matchesSearch && resource.free;
+    if (activeTab === "premium") return matchesSearch && !resource.free;
+    if (activeTab === "saved") return matchesSearch && savedResources.includes(resource.id);
+    
+    return matchesSearch;
+  });
+
+  const handleSaveResource = (id: number) => {
+    if (savedResources.includes(id)) {
+      setSavedResources(savedResources.filter(resourceId => resourceId !== id));
+      toast({
+        title: "Resource removed from saved items",
+        description: "The resource has been removed from your saved list",
+      });
+    } else {
+      setSavedResources([...savedResources, id]);
+      toast({
+        title: "Resource saved successfully",
+        description: "The resource has been added to your saved list",
+      });
     }
   };
 
-  // Filter resources based on search query
-  const filteredRecommended = recommendedResources.filter(resource => 
-    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleDownload = (resource: Resource) => {
+    if (!resource.free) {
+      toast({
+        title: "Premium Content",
+        description: "This is a premium resource. Please upgrade your plan to download.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // In a real app, this would trigger the actual download
+    toast({
+      title: "Download started",
+      description: `${resource.title} is being downloaded.`,
+    });
+    
+    // Simulate download by opening in a new tab
+    window.open(resource.url, "_blank");
+  };
 
-  const filteredSaved = savedResources.filter(resource => 
-    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleShare = (resource: Resource) => {
+    // In a real app, this would open a share dialog
+    if (navigator.share) {
+      navigator.share({
+        title: resource.title,
+        text: resource.description,
+        url: resource.url,
+      }).then(() => {
+        toast({
+          title: "Shared successfully",
+          description: "The resource has been shared.",
+        });
+      }).catch(() => {
+        toast({
+          title: "Share cancelled",
+          description: "The share action was cancelled.",
+        });
+      });
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      toast({
+        title: "Share link copied",
+        description: "The resource link has been copied to your clipboard.",
+      });
+      navigator.clipboard.writeText(resource.url);
+    }
+  };
 
-  const filteredPremium = premiumResources.filter(resource => 
-    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const getResourceIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'pdf':
+        return <FileText className="h-6 w-6 text-red-500" />;
+      case 'video':
+        return <Video className="h-6 w-6 text-blue-500" />;
+      case 'xlsx':
+        return <FileText className="h-6 w-6 text-green-500" />;
+      case 'zip':
+        return <FileText className="h-6 w-6 text-purple-500" />;
+      default:
+        return <FileText className="h-6 w-6 text-gray-500" />;
+    }
+  };
 
   return (
     <DashboardLayout userType="mentee">
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Resources</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Learning Resources</h1>
             <p className="text-gray-500 dark:text-gray-400">
-              Discover learning materials to support your growth
+              Access materials shared by your mentors and the EchoMentor community
             </p>
-          </div>
-          <div className="mt-4 md:mt-0">
-            <Button onClick={() => setActiveTab("recommended")}>
-              <BookOpen className="mr-2 h-4 w-4" />
-              Browse Library
-            </Button>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
             <Input
+              type="text"
               placeholder="Search resources..."
               className="pl-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" className="flex gap-2">
-            <Filter className="h-4 w-4" />
-            Filter
-          </Button>
         </div>
 
-        <Tabs defaultValue="recommended" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-6">
-            <TabsTrigger value="recommended">Recommended</TabsTrigger>
-            <TabsTrigger value="saved">Saved Resources</TabsTrigger>
-            <TabsTrigger value="premium">Premium Content</TabsTrigger>
+            <TabsTrigger value="all">All Resources</TabsTrigger>
+            <TabsTrigger value="free">Free</TabsTrigger>
+            <TabsTrigger value="premium">Premium</TabsTrigger>
+            <TabsTrigger value="saved">Saved</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="recommended">
+          <TabsContent value={activeTab} className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Recommended Resources</CardTitle>
-                <CardDescription>Materials suggested by your mentors</CardDescription>
+                <CardTitle>{activeTab === "all" ? "All Resources" : 
+                           activeTab === "free" ? "Free Resources" : 
+                           activeTab === "premium" ? "Premium Resources" : 
+                           "Saved Resources"}</CardTitle>
+                <CardDescription>
+                  {activeTab === "all" ? "Browse all available resources" : 
+                   activeTab === "free" ? "Free resources available for immediate download" : 
+                   activeTab === "premium" ? "Premium resources (requires subscription)" : 
+                   "Resources you've saved for later"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                {filteredRecommended.length > 0 ? (
+                {filteredResources.length > 0 ? (
                   <div className="space-y-4">
-                    {filteredRecommended.map((resource) => (
-                      <div key={resource.id} className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <div className="flex items-start">
-                          <div className="bg-echopurple-100 dark:bg-echopurple-900 p-2 rounded-md mr-4">
-                            <FileText className="h-6 w-6 text-echopurple-600 dark:text-echopurple-400" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <h3 className="font-medium">{resource.title}</h3>
-                              <div className="flex gap-2">
-                                <Badge variant="outline">{resource.type}</Badge>
-                                {resource.free ? (
-                                  <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                                    Free
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                                    {resource.price}
-                                  </Badge>
-                                )}
-                                {resource.recommended && (
-                                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
-                                    Recommended
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                              {resource.description}
-                            </p>
-                            <div className="flex items-center justify-between mt-4">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {resource.mentor ? `Recommended by ${resource.mentor} • ` : ""} Added on {resource.date}
-                              </div>
-                              <div className="flex gap-2">
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleResourceAction(resource, 'save')}
-                                >
-                                  Save for Later
-                                </Button>
-                                <Button 
-                                  size="sm"
-                                  onClick={() => handleResourceAction(resource, resource.free ? 'download' : 'purchase')}
-                                >
-                                  {resource.free ? (
-                                    <>
-                                      <Download className="h-4 w-4 mr-1" />
-                                      Download
-                                    </>
-                                  ) : (
-                                    <>
-                                      Purchase
-                                    </>
-                                  )}
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
+                    {filteredResources.map((resource) => (
+                      <div 
+                        key={resource.id} 
+                        className="flex flex-col md:flex-row gap-4 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg p-4 md:p-6">
+                          {getResourceIcon(resource.type)}
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <FileText className="h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium">No Recommended Resources</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-sm">
-                      You don't have any recommended resources yet. They will appear here when your mentors suggest materials.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="saved">
-            <Card>
-              <CardHeader>
-                <CardTitle>Saved Resources</CardTitle>
-                <CardDescription>Materials you've saved for later</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {filteredSaved.length > 0 ? (
-                  <div className="space-y-4">
-                    {filteredSaved.map((resource) => (
-                      <div key={resource.id} className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <div className="flex items-start">
-                          <div className="bg-echopurple-100 dark:bg-echopurple-900 p-2 rounded-md mr-4">
-                            <FileText className="h-6 w-6 text-echopurple-600 dark:text-echopurple-400" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-start justify-between">
-                              <h3 className="font-medium">{resource.title}</h3>
-                              <div className="flex gap-2">
-                                <Badge variant="outline">{resource.type}</Badge>
-                                {resource.free ? (
-                                  <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                                    Free
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                                    {resource.price}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                              {resource.description}
-                            </p>
-                            <div className="flex items-center justify-between mt-4">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
-                                Saved on {resource.date}
-                              </div>
-                              <div className="flex gap-2">
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleResourceAction(resource, 'remove')}
-                                >
-                                  Remove
-                                </Button>
-                                <Button 
-                                  size="sm"
-                                  onClick={() => handleResourceAction(resource, 'download')}
-                                >
-                                  <Download className="h-4 w-4 mr-1" />
-                                  Download
-                                </Button>
-                              </div>
+                        
+                        <div className="flex-1">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                            <h3 className="font-semibold text-lg">{resource.title}</h3>
+                            <div className="flex gap-2">
+                              <Badge variant={resource.free ? "outline" : "secondary"} className="whitespace-nowrap">
+                                {resource.free ? "Free" : "Premium"}
+                              </Badge>
+                              <Badge variant="outline">{resource.type}</Badge>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <BookOpen className="h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium">No Saved Resources</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-sm">
-                      You haven't saved any resources yet. Browse the recommended section and save resources for later.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="premium">
-            <Card>
-              <CardHeader>
-                <CardTitle>Premium Content</CardTitle>
-                <CardDescription>High-quality resources to accelerate your growth</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {filteredPremium.length > 0 ? (
-                  <div className="grid gap-6 md:grid-cols-3">
-                    {filteredPremium.map((resource) => (
-                      <div key={resource.id} className="border rounded-lg overflow-hidden">
-                        <div className="h-40 bg-gradient-to-r from-echopurple-600 to-echoblue-600 relative">
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-full">
-                              <FileText className="h-8 w-8 text-white" />
-                            </div>
-                          </div>
-                          <div className="absolute bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm text-white p-3">
-                            <Badge variant="outline" className="border-white/50 text-white">
-                              {resource.type}
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-medium text-lg mb-1">{resource.title}</h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                          
+                          <p className="text-gray-600 dark:text-gray-300 mt-1 mb-3">
                             {resource.description}
                           </p>
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center">
-                              <div className="flex">
-                                {[...Array(5)].map((_, index) => (
-                                  <svg
-                                    key={index}
-                                    className={`h-4 w-4 ${
-                                      index < Math.floor(resource.rating) ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"
-                                    }`}
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                                    />
-                                  </svg>
-                                ))}
-                              </div>
-                              <span className="text-sm ml-1">{resource.rating}</span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                                ({resource.reviews})
-                              </span>
+                          
+                          <div className="flex flex-wrap items-center justify-between mt-2">
+                            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                              <span>Size: {resource.size}</span>
+                              <span className="mx-2">•</span>
+                              <span>Added: {resource.date}</span>
                             </div>
-                            <div className="text-sm">
-                              {resource.duration || resource.items}
+                            
+                            <div className="flex mt-3 md:mt-0 gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => handleSaveResource(resource.id)}
+                                className="flex items-center gap-1"
+                              >
+                                {savedResources.includes(resource.id) ? 
+                                  <BookmarkCheck className="h-4 w-4" /> : 
+                                  <Bookmark className="h-4 w-4" />
+                                }
+                                {savedResources.includes(resource.id) ? "Saved" : "Save"}
+                              </Button>
+                              
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => handleShare(resource)}
+                                className="flex items-center gap-1"
+                              >
+                                <Share2 className="h-4 w-4" />
+                                Share
+                              </Button>
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => window.open(resource.url, "_blank")}
+                                className="flex items-center gap-1"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                                View
+                              </Button>
+                              
+                              <Button 
+                                variant={resource.free ? "default" : "secondary"} 
+                                size="sm" 
+                                onClick={() => handleDownload(resource)}
+                                className="flex items-center gap-1"
+                              >
+                                <Download className="h-4 w-4" />
+                                {resource.free ? "Download" : "Upgrade to Download"}
+                              </Button>
                             </div>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="font-bold text-lg">{resource.price}</div>
-                            <Button 
-                              size="sm"
-                              onClick={() => handleResourceAction(resource, 'purchase')}
-                            >
-                              Purchase
-                            </Button>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <BookOpen className="h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium">No Premium Content</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-sm">
-                      There are no premium resources available at the moment. Check back later.
+                  <div className="flex flex-col items-center justify-center py-16">
+                    <FileText className="h-16 w-16 text-gray-300 dark:text-gray-600 mb-4" />
+                    <h3 className="text-lg font-medium">No resources found</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-md">
+                      {activeTab === "all" ? "We couldn't find any resources matching your search query. Try adjusting your search." : 
+                       activeTab === "free" ? "No free resources found. Try searching for something else." : 
+                       activeTab === "premium" ? "No premium resources found. Try searching for something else." : 
+                       "You haven't saved any resources yet. Browse resources and click the save button to add them here."}
                     </p>
+                    {activeTab === "saved" && (
+                      <Button className="mt-4" onClick={() => setActiveTab("all")}>
+                        Browse Resources
+                      </Button>
+                    )}
                   </div>
                 )}
               </CardContent>
