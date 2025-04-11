@@ -30,11 +30,12 @@ const GoogleMeetRedirect = () => {
   };
   
   const meetCode = generateMeetCode();
+  const meetLink = `https://meet.google.com/${meetCode}`;
   
   // In a real app, you would fetch the session details from your backend
   const sessionDetails = {
     id: sessionId || "123456",
-    meetLink: `https://meet.google.com/${meetCode}`,
+    meetLink: meetLink,
     mentorName: "Rajat Kumar",
     menteeName: "Ankit Sharma",
     topic: "Career Transition to Product Management",
@@ -70,7 +71,7 @@ const GoogleMeetRedirect = () => {
     });
     
     // Navigate back to dashboard
-    navigate("/mentee/sessions");
+    navigate(-1);
   };
   
   return (

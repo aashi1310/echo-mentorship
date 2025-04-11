@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, Video, MessageSquare, FileText } from "lucide-react";
 import RescheduleSessionDialog from "@/components/RescheduleSessionDialog";
+import { useNavigate } from "react-router-dom";
 
 // Sample data for the sessions
-const upcomingSessions = [
+const initialUpcomingSessions = [
   {
     id: 1,
     mentee: "Priya Sharma",
@@ -73,14 +74,55 @@ const pastSessions = [
   }
 ];
 
+const sessionRequests = [
+  {
+    id: 7,
+    mentee: "Siddharth Kapoor",
+    date: "Next Monday",
+    time: "3:00 PM",
+    topic: "Career Advice",
+    image: "/placeholder.svg",
+    type: "video",
+    requestedOn: "Today"
+  }
+];
+
 const MentorSessions = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [selectedSession, setSelectedSession] = useState(null);
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+  const [upcomingSessions, setUpcomingSessions] = useState(initialUpcomingSessions);
+  const [requests, setRequests] = useState(sessionRequests);
+  const navigate = useNavigate();
 
   const handleReschedule = (session) => {
     setSelectedSession(session);
     setShowRescheduleDialog(true);
+  };
+  
+  const handleJoinSession = (sessionId) => {
+    navigate(`/join-session/${sessionId}`);
+  };
+  
+  const handleAcceptRequest = (requestId) => {
+    // Find the request
+    const request = requests.find(req => req.id === requestId);
+    
+    if (request) {
+      // Add to upcoming sessions
+      setUpcomingSessions(prev => [...prev, {
+        ...request,
+        status: "upcoming"
+      }]);
+      
+      // Remove from requests
+      setRequests(prev => prev.filter(req => req.id !== requestId));
+    }
+  };
+  
+  const handleDeclineRequest = (requestId) => {
+    // Remove from requests
+    setRequests(prev => prev.filter(req => req.id !== requestId));
   };
 
   return (
@@ -151,10 +193,11 @@ const MentorSessions = () => {
                           >
                             Reschedule
                           </Button>
-                          <Button size="sm" asChild>
-                            <a href={`/join-session/${session.id}`}>
-                              Join Session
-                            </a>
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleJoinSession(session.id)}
+                          >
+                            Join Session
                           </Button>
                         </div>
                       </div>
@@ -252,13 +295,65 @@ const MentorSessions = () => {
                 <CardDescription>Mentorship sessions requested by mentees</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center justify-center py-12">
-                  <MessageSquare className="h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium">No Pending Requests</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-sm">
-                    You don't have any pending session requests. They will appear here when mentees request to book your time.
-                  </p>
-                </div>
+                {requests.length > 0 ? (
+                  <div className="space-y-6">
+                    {requests.map((request) => (
+                      <div key={request.id} className="flex items-center justify-between border-b pb-6 last:border-0 last:pb-0">
+                        <div className="flex items-center space-x-4">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={request.image} alt={request.mentee} />
+                            <AvatarFallback>
+                              {request.mentee.split(" ").map(n => n[0]).join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="font-semibold">{request.mentee}</h4>
+                            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                              <Calendar className="mr-1 h-4 w-4" />
+                              <span>Requested: {request.requestedOn}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-1">
+                              <Calendar className="mr-1 h-4 w-4" />
+                              <span>Proposed: {request.date}, {request.time}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Badge variant="outline">{request.topic}</Badge>
+                              <Badge variant="secondary" className="flex items-center space-x-1">
+                                {request.type === "video" ? 
+                                  <><Video className="h-3 w-3 mr-1" /> Video Call</> : 
+                                  <><MessageSquare className="h-3 w-3 mr-1" /> Chat</>
+                                }
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleDeclineRequest(request.id)}
+                          >
+                            Decline
+                          </Button>
+                          <Button 
+                            size="sm"
+                            onClick={() => handleAcceptRequest(request.id)}
+                          >
+                            Accept
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <MessageSquare className="h-12 w-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium">No Pending Requests</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-center max-w-sm">
+                      You don't have any pending session requests. They will appear here when mentees request to book your time.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

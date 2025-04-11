@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -32,6 +32,7 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "react-router-dom";
 
 const data = [
   {
@@ -91,16 +92,24 @@ const PaymentDialog = ({ mentorName }: { mentorName?: string }) => {
             <Input id="email" defaultValue="m@example.com" className="col-span-3" />
           </div>
         </div>
-        {/* @ts-ignore */}
-        {/* <DialogFooter>
-          <Button type="submit">Make Payment</Button>
-        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   )
 }
 
 const MenteeDashboard = () => {
+  const [upcomingSession, setUpcomingSession] = useState({
+    mentor: "Rajat Kumar",
+    date: new Date().toLocaleDateString(),
+    time: "4:00 PM",
+    id: 1
+  });
+  const navigate = useNavigate();
+  
+  const handleJoinSession = () => {
+    navigate(`/join-session/${upcomingSession.id}`);
+  };
+
   return (
     <DashboardLayout userType="mentee">
       <div className="space-y-8">
@@ -123,16 +132,16 @@ const MenteeDashboard = () => {
             <CardContent className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
                 <CalendarDays className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                <span>October 26, 2023, 4:00 PM</span>
+                <span>{upcomingSession.date}, {upcomingSession.time}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder.svg" alt="Mentor Avatar" />
-                  <AvatarFallback>MS</AvatarFallback>
+                  <AvatarFallback>RK</AvatarFallback>
                 </Avatar>
-                <span>With Mentor Smith</span>
+                <span>With {upcomingSession.mentor}</span>
               </div>
-              <Button variant="secondary">Join Session</Button>
+              <Button variant="secondary" onClick={handleJoinSession}>Join Session</Button>
             </CardContent>
           </Card>
 
@@ -196,13 +205,17 @@ const MenteeDashboard = () => {
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell className="font-medium">Oct 26, 2023</TableCell>
-                  <TableCell>Mentor Smith</TableCell>
+                  <TableCell className="font-medium">{upcomingSession.date}</TableCell>
+                  <TableCell>{upcomingSession.mentor}</TableCell>
                   <TableCell>React Fundamentals</TableCell>
-                  <TableCell className="text-right">Upcoming</TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="outline" size="sm" onClick={handleJoinSession}>
+                      Join
+                    </Button>
+                  </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-medium">Oct 19, 2023</TableCell>
+                  <TableCell className="font-medium">Apr 7, 2024</TableCell>
                   <TableCell>Mentor Smith</TableCell>
                   <TableCell>JavaScript Basics</TableCell>
                   <TableCell className="text-right">Completed</TableCell>

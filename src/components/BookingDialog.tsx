@@ -4,25 +4,27 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { CalendarIcon, Video } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface BookingDialogProps {
   mentorName: string;
   trigger?: React.ReactNode;
+  onSessionCreated?: (sessionData: any) => void;
 }
 
-const BookingDialog = ({ mentorName, trigger }: BookingDialogProps) => {
+const BookingDialog = ({ mentorName, trigger, onSessionCreated }: BookingDialogProps) => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [time, setTime] = useState("");
   const [duration, setDuration] = useState("30");
   const [topic, setTopic] = useState("");
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
 
   const timeSlots = [
     "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
@@ -34,6 +36,38 @@ const BookingDialog = ({ mentorName, trigger }: BookingDialogProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Navigate to sessions page
+    navigate("/mentee/sessions");
+    
+    // Reset and close
+    setStep(1);
+    setOpen(false);
+    
+    // Show success message
+    toast({
+      title: "Session booked successfully!",
+      description: `Your session with ${mentorName} has been scheduled for ${date ? format(date, 'PPP') : ''} at ${time}.`,
+    });
+  };
+
+  const generateGoogleMeetLink = () => {
+    // Generate a valid Google Meet link with correct 10-character format
+    const letters = 'abcdefghijklmnopqrstuvwxyz';
+    const alphanumeric = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    
+    // First character must be a letter
+    let code = letters.charAt(Math.floor(Math.random() * letters.length));
+    
+    // Next 9 characters can be alphanumeric
+    for (let i = 0; i < 9; i++) {
+      code += alphanumeric.charAt(Math.floor(Math.random() * alphanumeric.length));
+    }
+    
+    return `https://meet.google.com/${code}`;
+  };
+
+  const handleComplete = () => {
     if (!date || !time || !topic) {
       toast({
         title: "Missing information",
@@ -42,29 +76,30 @@ const BookingDialog = ({ mentorName, trigger }: BookingDialogProps) => {
       });
       return;
     }
-
-    // In a real app, this would send the booking data to your backend
-    toast({
-      title: "Session booked!",
-      description: `Your free trial session with ${mentorName} has been scheduled.`,
-    });
     
-    // Reset and close
-    setStep(1);
-    setOpen(false);
-  };
-
-  const generateGoogleMeetLink = () => {
-    // In a real app, this would call your backend to create a Google Meet link
-    return `https://meet.google.com/abc-defg-hij`;
-  };
-
-  const handleComplete = () => {
     setStep(2);
     const meetLink = generateGoogleMeetLink();
     
+    // Create session data
+    const sessionData = {
+      id: Date.now().toString(),
+      mentorName: mentorName,
+      date: date ? format(date, 'PPP') : '',
+      time: time,
+      topic: topic,
+      duration: `${duration} minutes`,
+      meetLink: meetLink,
+      status: "upcoming",
+      createdAt: new Date().toISOString()
+    };
+    
+    // Call the callback with the session data
+    if (onSessionCreated) {
+      onSessionCreated(sessionData);
+    }
+    
     // In a real app, you would save this to your database
-    console.log("Google Meet link generated:", meetLink);
+    console.log("Session created:", sessionData);
   };
 
   return (
@@ -188,8 +223,8 @@ const BookingDialog = ({ mentorName, trigger }: BookingDialogProps) => {
                 
                 <div>
                   <h5 className="text-sm font-medium">Google Meet Link</h5>
-                  <a href="https://meet.google.com/abc-defg-hij" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                    https://meet.google.com/abc-defg-hij
+                  <a href={generateGoogleMeetLink()} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                    {generateGoogleMeetLink()}
                   </a>
                   <p className="text-xs text-gray-500 mt-1">
                     This link will be emailed to you and will be available in your dashboard.

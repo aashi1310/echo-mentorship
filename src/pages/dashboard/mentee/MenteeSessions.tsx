@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, Video, MessageSquare, FileText } from "lucide-react";
+import { format } from "date-fns";
+import BookingDialog from "@/components/BookingDialog";
+import { useNavigate } from "react-router-dom";
 
 // Sample data for the sessions
-const upcomingSessions = [
+const initialUpcomingSessions = [
   {
     id: 1,
     mentor: "Rajat Kumar",
@@ -85,6 +88,28 @@ const recommendedMentors = [
 
 const MenteeSessions = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [upcomingSessions, setUpcomingSessions] = useState(initialUpcomingSessions);
+  const navigate = useNavigate();
+
+  // Handler for creating a new session
+  const handleNewSession = (sessionData: any) => {
+    const newSession = {
+      id: parseInt(sessionData.id),
+      mentor: sessionData.mentorName,
+      date: sessionData.date,
+      time: sessionData.time,
+      topic: sessionData.topic,
+      image: "/placeholder.svg",
+      type: "video"
+    };
+    
+    setUpcomingSessions(prev => [...prev, newSession]);
+  };
+  
+  // Handler for joining a session
+  const handleJoinSession = (sessionId: number) => {
+    navigate(`/join-session/${sessionId}`);
+  };
 
   return (
     <DashboardLayout userType="mentee">
@@ -97,10 +122,16 @@ const MenteeSessions = () => {
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <Button>
-              <Calendar className="mr-2 h-4 w-4" />
-              Book New Session
-            </Button>
+            <BookingDialog 
+              mentorName="Choose a mentor" 
+              trigger={
+                <Button>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Book New Session
+                </Button>
+              }
+              onSessionCreated={handleNewSession}
+            />
           </div>
         </div>
 
@@ -150,8 +181,11 @@ const MenteeSessions = () => {
                           <Button variant="outline" size="sm">
                             Reschedule
                           </Button>
-                          <Button size="sm">
-                            Prepare
+                          <Button 
+                            size="sm"
+                            onClick={() => handleJoinSession(session.id)}
+                          >
+                            Join Session
                           </Button>
                         </div>
                       </div>
@@ -325,9 +359,15 @@ const MenteeSessions = () => {
                           <Button variant="outline" size="sm" className="flex-1">
                             View Profile
                           </Button>
-                          <Button size="sm" className="flex-1">
-                            Book Session
-                          </Button>
+                          <BookingDialog 
+                            mentorName={mentor.name}
+                            trigger={
+                              <Button size="sm" className="flex-1">
+                                Book Session
+                              </Button>
+                            }
+                            onSessionCreated={handleNewSession}
+                          />
                         </div>
                       </div>
                     </div>
