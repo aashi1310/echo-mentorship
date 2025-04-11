@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
+import { useUser } from "@/contexts/UserContext";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,7 @@ const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +45,27 @@ const SignIn = () => {
       // Simulate authentication
       await new Promise((resolve) => setTimeout(resolve, 1500));
       
-      // For demo, redirect to different dashboards based on email
-      if (email.includes("mentor")) {
+      // For demo, determine user type and create user object
+      const userType = email.includes("mentor") ? "mentor" : "mentee";
+      
+      // Extract name from email (before the @ symbol) and capitalize it
+      const nameParts = email.split('@')[0].split('.');
+      const formattedName = nameParts.map(part => 
+        part.charAt(0).toUpperCase() + part.slice(1)
+      ).join(' ');
+      
+      const user = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: formattedName,
+        email: email,
+        userType: userType as "mentor" | "mentee",
+      };
+      
+      // Set user in context
+      setUser(user);
+      
+      // Navigate to appropriate dashboard
+      if (userType === "mentor") {
         navigate("/mentor/dashboard");
       } else {
         navigate("/mentee/dashboard");

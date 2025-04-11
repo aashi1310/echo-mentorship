@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import PageLayout from "@/components/layout/PageLayout";
+import { useUser } from "@/contexts/UserContext";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -38,6 +39,7 @@ const SignUp = () => {
 
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +77,17 @@ const SignUp = () => {
     try {
       // Simulate registration
       await new Promise((resolve) => setTimeout(resolve, 1500));
+      
+      // Create user object
+      const user = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: name,
+        email: email,
+        userType: userType as "mentor" | "mentee",
+      };
+      
+      // Set user in context
+      setUser(user);
       
       // For demo purposes, navigate to the appropriate dashboard
       if (userType === "mentor") {

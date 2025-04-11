@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUser } from "@/contexts/UserContext";
 
 interface DashboardHeaderProps {
   userType: "mentor" | "mentee";
@@ -18,8 +19,17 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader = ({ userType, collapsed }: DashboardHeaderProps) => {
-  const userName = userType === "mentor" ? "Rajat Kumar" : "Priya Sharma";
+  const { user, logout } = useUser();
+  const userName = user?.name || (userType === "mentor" ? "Rajat Kumar" : "Priya Sharma");
   const userRole = userType === "mentor" ? "Mentor" : "Mentee";
+  
+  // Create initials from user name
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("");
+  };
 
   return (
     <header
@@ -56,7 +66,7 @@ const DashboardHeader = ({ userType, collapsed }: DashboardHeaderProps) => {
                 <div className="flex flex-col space-y-1">
                   <p className="font-medium text-sm">New session booked</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {userType === "mentor" ? "Priya Sharma" : "Rajat Kumar"} has booked a session for tomorrow at 5:00 PM.
+                    {userType === "mentor" ? user?.name || "Priya Sharma" : user?.name || "Rajat Kumar"} has booked a session for tomorrow at 5:00 PM.
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     5 minutes ago
@@ -97,9 +107,9 @@ const DashboardHeader = ({ userType, collapsed }: DashboardHeaderProps) => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center space-x-2">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={userType === "mentor" ? "/placeholder.svg" : "/placeholder.svg"} alt={userName} />
+                <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={userName} />
                 <AvatarFallback>
-                  {userName.split(" ").map(n => n[0]).join("")}
+                  {getInitials(userName)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start">
@@ -111,12 +121,21 @@ const DashboardHeader = ({ userType, collapsed }: DashboardHeaderProps) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>My Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+              if (userType === "mentor") {
+                window.location.href = "/mentor/profile";
+              } else {
+                window.location.href = "/mentee/profile";
+              }
+            }}>My Profile</DropdownMenuItem>
             <DropdownMenuItem>Account Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Help & Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
+            <DropdownMenuItem 
+              onClick={logout}
+              className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+            >
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

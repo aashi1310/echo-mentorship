@@ -33,6 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@/contexts/UserContext";
 
 const data = [
   {
@@ -105,6 +106,7 @@ const MenteeDashboard = () => {
     id: 1
   });
   const navigate = useNavigate();
+  const { user } = useUser();
   
   const handleJoinSession = () => {
     navigate(`/join-session/${upcomingSession.id}`);
@@ -117,7 +119,7 @@ const MenteeDashboard = () => {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-gray-500 dark:text-gray-400">
-              Track your progress and upcoming sessions
+              Welcome, {user?.name?.split(" ")[0] || "Mentee"}! Track your progress and upcoming sessions
             </p>
           </div>
           <PaymentDialog />

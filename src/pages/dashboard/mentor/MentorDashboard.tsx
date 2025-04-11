@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -7,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Calendar, Clock, Users, FileText, ArrowRight } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
 
 const MentorDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
+  const mentorName = user?.name || "Rajat Kumar";
   
-  // Sample data for the dashboard
   const upcomingSessions = [
     {
       id: 1,
@@ -108,7 +109,7 @@ const MentorDashboard = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Welcome back, Rajat. Here's an overview of your mentoring activities.
+            Welcome back, {mentorName.split(" ")[0]}. Here's an overview of your mentoring activities.
           </p>
         </div>
 
