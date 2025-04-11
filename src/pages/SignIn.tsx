@@ -45,8 +45,9 @@ const SignIn = () => {
       // Simulate authentication
       await new Promise((resolve) => setTimeout(resolve, 1500));
       
-      // For demo, determine user type and create user object
-      const userType = email.includes("mentor") ? "mentor" : "mentee";
+      // Determine user type from email
+      // If email includes "mentor", user is a mentor; otherwise, user is a mentee
+      const userType = email.toLowerCase().includes("mentor") ? "mentor" : "mentee";
       
       // Extract name from email (before the @ symbol) and capitalize it
       const nameParts = email.split('@')[0].split('.');
@@ -64,7 +65,7 @@ const SignIn = () => {
       // Set user in context
       setUser(user);
       
-      // Navigate to appropriate dashboard
+      // Navigate to appropriate dashboard based on userType
       if (userType === "mentor") {
         navigate("/mentor/dashboard");
       } else {

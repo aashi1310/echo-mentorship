@@ -78,7 +78,7 @@ const SignUp = () => {
       // Simulate registration
       await new Promise((resolve) => setTimeout(resolve, 1500));
       
-      // Create user object
+      // Create user object with explicit user type
       const user = {
         id: Math.random().toString(36).substr(2, 9),
         name: name,
@@ -89,7 +89,7 @@ const SignUp = () => {
       // Set user in context
       setUser(user);
       
-      // For demo purposes, navigate to the appropriate dashboard
+      // Navigate to the appropriate dashboard based on user type
       if (userType === "mentor") {
         navigate("/mentor/dashboard");
       } else {
