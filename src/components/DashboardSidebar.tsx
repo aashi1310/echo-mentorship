@@ -19,6 +19,7 @@ import {
   Moon,
 } from "lucide-react";
 import { useState } from "react";
+import { useUser } from "@/contexts/UserContext";
 
 interface SidebarProps {
   userType: "mentor" | "mentee";
@@ -28,6 +29,7 @@ const DashboardSidebar = ({ userType }: SidebarProps) => {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { logout } = useUser();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -157,17 +159,16 @@ const DashboardSidebar = ({ userType }: SidebarProps) => {
                 </>
               )}
             </Button>
-            <Link to="/signin">
-              <Button
-                variant="ghost"
-                className={`w-full ${
-                  collapsed ? "justify-center px-2" : "justify-start"
-                } text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20`}
-              >
-                <LogOut size={20} />
-                {!collapsed && <span className="ml-3">Logout</span>}
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              className={`w-full ${
+                collapsed ? "justify-center px-2" : "justify-start"
+              } text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20`}
+              onClick={logout}
+            >
+              <LogOut size={20} />
+              {!collapsed && <span className="ml-3">Logout</span>}
+            </Button>
           </div>
         </div>
       </div>
