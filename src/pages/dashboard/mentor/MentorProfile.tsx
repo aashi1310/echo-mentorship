@@ -6,13 +6,17 @@ import ProfileImageUpload from "@/components/profile/ProfileImageUpload";
 import PublicProfileForm from "@/components/profile/PublicProfileForm";
 import PersonalInfoForm from "@/components/profile/PersonalInfoForm";
 import AccountSettings from "@/components/profile/AccountSettings";
+import { useUser } from "@/contexts/UserContext";
 
 const MentorProfile = () => {
-  const [profileImage, setProfileImage] = useState("/placeholder.svg");
-  const [name, setName] = useState("Rajat Kumar");
-  const [title, setTitle] = useState("Senior Software Engineer at TechCorp");
+  const { user } = useUser();
+  
+  // Use user data from context if available, otherwise use fallback values
+  const [profileImage, setProfileImage] = useState(user?.avatar || "/placeholder.svg");
+  const [name, setName] = useState(user?.name || "");
+  const [title, setTitle] = useState("Senior Software Engineer at TechCorp"); // This could be added to the user context in the future
   const [bio, setBio] = useState("Software engineer with 8+ years of experience in full-stack development. Passionate about mentoring and helping others grow in their tech career.");
-  const [email, setEmail] = useState("rajat.kumar@example.com");
+  const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState("+91 98765 43210");
   const [location, setLocation] = useState("Bangalore, India");
   const [languages, setLanguages] = useState("English, Hindi");

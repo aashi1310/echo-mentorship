@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 interface ProfileImageUploadProps {
   initialImage: string;
@@ -13,6 +14,7 @@ interface ProfileImageUploadProps {
 
 const ProfileImageUpload = ({ initialImage, onImageChange, userName }: ProfileImageUploadProps) => {
   const [profileImage, setProfileImage] = useState(initialImage);
+  const { user, setUser } = useUser();
   
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -23,6 +25,15 @@ const ProfileImageUpload = ({ initialImage, onImageChange, userName }: ProfileIm
           const newImage = e.target.result.toString();
           setProfileImage(newImage);
           onImageChange(newImage);
+          
+          // Update user context with the new avatar
+          if (user) {
+            setUser({
+              ...user,
+              avatar: newImage
+            });
+          }
+          
           toast({
             title: "Profile Picture Updated",
             description: "Your profile picture has been successfully updated.",

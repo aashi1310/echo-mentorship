@@ -1,28 +1,27 @@
 
-import React from "react";
+import React, { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PublicProfileForm from "@/components/profile/PublicProfileForm";
 import PersonalInfoForm from "@/components/profile/PersonalInfoForm";
 import DocumentUploader from "@/components/profile/DocumentUploader";
 import AccountSettings from "@/components/profile/AccountSettings";
+import ProfileImageUpload from "@/components/profile/ProfileImageUpload";
+import { useUser } from "@/contexts/UserContext";
 
 const MenteeProfile = () => {
-  // Initial data for profile components
-  const initialProfileData = {
-    name: "Priya Sharma",
-    title: "Business Analyst at DataCorp",
-    bio: "Business analyst with 3 years of experience, looking to transition into product management. Passionate about user experience and data-driven decision making.",
-    image: "/placeholder.svg",
-    interests: ["Product Management", "UX Research", "Analytics", "Leadership"],
-  };
-
-  const initialPersonalInfo = {
-    email: "priya.sharma@example.com",
-    phone: "+91 98765 54321",
-    location: "Bangalore, India",
-    languages: "English, Hindi, Kannada",
-  };
+  const { user } = useUser();
+  
+  // Use user data from context if available, otherwise use fallback values
+  const [profileImage, setProfileImage] = useState(user?.avatar || "/placeholder.svg");
+  const [name, setName] = useState(user?.name || "");
+  const [title, setTitle] = useState("Business Analyst at DataCorp");
+  const [bio, setBio] = useState("Business analyst with 3 years of experience, looking to transition into product management. Passionate about user experience and data-driven decision making.");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState("+91 98765 54321");
+  const [location, setLocation] = useState("Bangalore, India");
+  const [languages, setLanguages] = useState("English, Hindi, Kannada");
+  const [interests, setInterests] = useState(["Product Management", "UX Research", "Analytics", "Leadership"]);
 
   const initialResumeFile = {
     name: "Resume_Priya_Sharma.pdf",
@@ -50,12 +49,18 @@ const MenteeProfile = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <ProfileImageUpload 
+                initialImage={profileImage} 
+                onImageChange={setProfileImage}
+                userName={name}
+              />
+              
               <PublicProfileForm 
-                initialName={initialProfileData.name}
-                initialTitle={initialProfileData.title}
-                initialBio={initialProfileData.bio}
-                initialImage={initialProfileData.image}
-                initialInterests={initialProfileData.interests}
+                initialName={name}
+                initialTitle={title}
+                initialBio={bio}
+                initialImage={profileImage}
+                initialInterests={interests}
               />
             </CardContent>
           </Card>
@@ -70,10 +75,10 @@ const MenteeProfile = () => {
               </CardHeader>
               <CardContent>
                 <PersonalInfoForm 
-                  initialEmail={initialPersonalInfo.email}
-                  initialPhone={initialPersonalInfo.phone}
-                  initialLocation={initialPersonalInfo.location}
-                  initialLanguages={initialPersonalInfo.languages}
+                  initialEmail={email}
+                  initialPhone={phone}
+                  initialLocation={location}
+                  initialLanguages={languages}
                 />
               </CardContent>
             </Card>

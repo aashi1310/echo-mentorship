@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AtSign, MapPin, Phone } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 interface PersonalInfoFormProps {
   initialEmail: string;
@@ -24,7 +25,17 @@ const PersonalInfoForm = ({
   const [location, setLocation] = useState(initialLocation);
   const [languages, setLanguages] = useState(initialLanguages);
   
+  const { user, setUser } = useUser();
+  
   const handleSavePersonalInfo = () => {
+    // Update user context with the new data
+    if (user) {
+      setUser({
+        ...user,
+        email: email
+      });
+    }
+    
     toast({
       title: "Personal Information Updated",
       description: "Your personal information has been successfully updated.",

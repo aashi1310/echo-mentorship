@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import ProfileImageUpload from "./ProfileImageUpload";
 import { toast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 interface PublicProfileFormProps {
   initialName: string;
@@ -26,9 +26,10 @@ const PublicProfileForm = ({
   const [name, setName] = useState(initialName);
   const [title, setTitle] = useState(initialTitle);
   const [bio, setBio] = useState(initialBio);
-  const [profileImage, setProfileImage] = useState(initialImage);
   const [interests, setInterests] = useState(initialInterests);
   const [newInterest, setNewInterest] = useState("");
+  
+  const { user, setUser } = useUser();
   
   const handleAddInterest = () => {
     if (newInterest.trim() && !interests.includes(newInterest.trim())) {
@@ -42,6 +43,14 @@ const PublicProfileForm = ({
   };
   
   const handleUpdateProfile = () => {
+    // Update user context with the new data
+    if (user) {
+      setUser({
+        ...user,
+        name: name
+      });
+    }
+    
     toast({
       title: "Profile Updated",
       description: "Your public profile has been successfully updated.",
@@ -50,12 +59,6 @@ const PublicProfileForm = ({
   
   return (
     <div className="space-y-6">
-      <ProfileImageUpload 
-        initialImage={profileImage} 
-        onImageChange={setProfileImage}
-        userName={name}
-      />
-
       <div className="space-y-3">
         <div className="grid gap-2">
           <Label htmlFor="name">Full Name</Label>
