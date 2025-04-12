@@ -19,3 +19,6 @@ export default function useMobile() {
 
   return isMobile;
 }
+
+// Alias for backward compatibility
+export const useIsMobile = useMobile;
