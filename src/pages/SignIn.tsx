@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
 import { useUser } from "@/contexts/UserContext";
+import { userService } from "@/services/userService";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -42,39 +43,40 @@ const SignIn = () => {
     setIsLoading(true);
 
     try {
-      // Simulate authentication
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Determine user type from email
-      // If email includes "mentor", user is a mentor; otherwise, user is a mentee
-      const userType = email.toLowerCase().includes("mentor") ? "mentor" : "mentee";
-      
-      // Extract name from email (before the @ symbol) and capitalize it
-      const nameParts = email.split('@')[0].split('.');
-      const formattedName = nameParts.map(part => 
-        part.charAt(0).toUpperCase() + part.slice(1)
-      ).join(' ');
-      
-      const user = {
-        id: Math.random().toString(36).substr(2, 9),
-        name: formattedName,
-        email: email,
-        userType: userType as "mentor" | "mentee",
+      // Use userService for authentication
+      const credentials = {
+        email,
+        password
       };
+
+      const user = await userService.login(credentials);
       
-      // Set user in context
-      setUser(user);
-      
-      // Navigate to appropriate dashboard based on userType
-      if (userType === "mentor") {
-        navigate("/mentor/dashboard");
-      } else {
-        navigate("/mentee/dashboard");
+      if (!user || !user.role || !user.token) {
+        throw new Error('Invalid user data received');
       }
+
+      // Store auth token and user data
+      localStorage.setItem('authToken', user.token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Set user in context
+      setUser({ ...user, mentorId: user.mentorId || '' });
+      
+      // Ensure user role is properly set before navigation
+      if (!user.role) {
+        throw new Error('User role not specified');
+      }
+
+      // Add a small delay to ensure context is updated
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Navigate to appropriate dashboard based on user role
+      const dashboardPath = user.role === "mentor" ? "/mentor/dashboard" : "/mentee/dashboard";
+      navigate(dashboardPath, { replace: true });
 
       toast({
         title: "Sign in successful",
-        description: "Welcome back to EchoMentor!",
+        description: `Welcome back to EchoMentor, ${user.name}!`,
       });
     } catch (error) {
       toast({

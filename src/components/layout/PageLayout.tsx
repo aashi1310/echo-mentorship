@@ -29,7 +29,7 @@ const PageLayout = ({
         />
       )}
       <Navbar />
-      <div className="flex-grow">
+      <div className="flex-grow pt-16">
         {children}
       </div>
       <ChatbotButton />

@@ -4,15 +4,36 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Star, ArrowRight, BookOpen, Calendar, Award, Users, Target } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
+import { useState } from "react";
+import CrisisDialog from "@/components/CrisisDialog";
 
 const Home = () => {
-  const mentorImages = [
-    "/placeholder.svg",
-    "/placeholder.svg",
-    "/placeholder.svg",
-    "/placeholder.svg",
-    "/placeholder.svg",
-    "/placeholder.svg",
+  const [showCrisisDialog, setShowCrisisDialog] = useState(false);
+  const featuredMentors = [
+    {
+      name: "Divyanshi Agarwal",
+      role: "Frontend Development Expert",
+      image: "/mentors/divyanshi-agarwal.svg",
+      specialties: ["Frontend Development", "React", "UI/UX"],
+    },
+    {
+      name: "Priyank Mishra",
+      role: "Backend Development Lead",
+      image: "/mentors/priyank-mishra.svg",
+      specialties: ["Backend Development", "System Design", "Node.js"],
+    },
+    {
+      name: "Arjun Singh",
+      role: "Cloud Architecture Specialist",
+      image: "/placeholder.svg",
+      specialties: ["Cloud Infrastructure", "DevOps", "System Design"],
+    },
+    {
+      name: "Priya Sharma",
+      role: "Engineering Manager",
+      image: "/placeholder.svg",
+      specialties: ["Team Leadership", "Career Growth", "Technical Roadmaps"],
+    },
   ];
 
   const testimonials = [
@@ -70,7 +91,7 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Connect with experienced Indian mentors who can guide you on your
+                Connect with experienced mentors who can guide you on your
                 journey to success. Personalized mentorship that transforms
                 potential into achievement.
               </motion.p>
@@ -100,8 +121,8 @@ const Home = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <img
-                src="/placeholder.svg"
-                alt="Mentorship session"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f3f4f6'/%3E%3Cpath d='M400 150c-30 0-54.6 24.6-54.6 54.6s24.6 54.6 54.6 54.6 54.6-24.6 54.6-54.6S430 150 400 150zm0 99.2c-24.6 0-44.6-20-44.6-44.6s20-44.6 44.6-44.6 44.6 20 44.6 44.6-20 44.6-44.6 44.6z' fill='%236366f1'/%3E%3Cpath d='M400 350c-66.2 0-120 53.8-120 120h10c0-60.7 49.3-110 110-110s110 49.3 110 110h10c0-66.2-53.8-120-120-120zm-150-150c-24.8 0-45 20.2-45 45s20.2 45 45 45 45-20.2 45-45-20.2-45-45-45zm300 0c-24.8 0-45 20.2-45 45s20.2 45 45 45 45-20.2 45-45-20.2-45-45-45z' fill='%236366f1'/%3E%3Cpath d='M250 350c-49.7 0-90 40.3-90 90h10c0-44.1 35.9-80 80-80s80 35.9 80 80h10c0-49.7-40.3-90-90-90zm300 0c-49.7 0-90 40.3-90 90h10c0-44.1 35.9-80 80-80s80 35.9 80 80h10c0-49.7-40.3-90-90-90z' fill='%236366f1'/%3E%3C/svg%3E"
+                alt="Mentorship Illustration"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
@@ -115,6 +136,34 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Crisis Support Banner */}
+      <section className="py-8 bg-gradient-to-r from-red-500 to-pink-500">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-white">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold mb-2">Need Immediate Support?</h2>
+              <p className="text-white/90">Our crisis counsellors are available 24/7. Don't hesitate to reach out.</p>
+            </div>
+            <div className="flex gap-4">
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="bg-white text-red-500 hover:bg-white/90"
+                onClick={() => setShowCrisisDialog(true)}
+              >
+                Get Help Now
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Crisis Dialog */}
+      <CrisisDialog
+        open={showCrisisDialog}
+        onOpenChange={setShowCrisisDialog}
+      />
 
       {/* Stats Section */}
       <section className="py-12 bg-gray-50 dark:bg-gray-900">
@@ -156,6 +205,38 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Featured Mentors Section */}
+      <section className="py-16 bg-white dark:bg-gray-800">
+        <div className="container px-4 md:px-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Featured Mentors</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {featuredMentors.map((mentor, index) => (
+              <div key={index} className="flex items-start space-x-6 p-6 bg-gray-50 dark:bg-gray-900 rounded-xl hover:shadow-lg transition-shadow">
+                <img
+                  src={mentor.image}
+                  alt={mentor.name}
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">{mentor.name}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-3">{mentor.role}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {mentor.specialties.map((specialty, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 rounded-full text-sm"
+                      >
+                        {specialty}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-16 md:py-24">
         <div className="container px-4 md:px-6">
@@ -174,7 +255,7 @@ const Home = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4">
                 <Users />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Expert Indian Mentors</h3>
+              <h3 className="text-xl font-semibold mb-2">Expert Mentors</h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Connect with verified professionals with real-world experience in
                 your field of interest.
@@ -316,26 +397,22 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mentorImages.map((image, idx) => (
+            {featuredMentors.map((mentor, idx) => (
               <div
                 key={idx}
                 className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="h-48 overflow-hidden">
                   <img
-                    src={image}
-                    alt={`Mentor ${idx + 1}`}
+                    src={mentor.image}
+                    alt={mentor.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center mb-2">
                     <span className="text-sm bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 px-3 py-1 rounded-full font-medium">
-                      {idx % 3 === 0
-                        ? "Technology"
-                        : idx % 3 === 1
-                        ? "Business"
-                        : "Career Development"}
+                      {mentor.specialties[0]}
                     </span>
                     <div className="ml-auto flex">
                       {[...Array(5)].map((_, i) => (
@@ -403,10 +480,10 @@ const Home = () => {
         <div className="container px-4 md:px-6">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              What Our Users Say
+              Echo Diaries
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Real success stories from our community
+              Inspiring journeys from our community
             </p>
           </div>
 

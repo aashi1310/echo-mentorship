@@ -1,11 +1,10 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, HelpCircle } from "lucide-react";
+import { Check, X, HelpCircle, Link } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -15,10 +14,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import PageLayout from "@/components/layout/PageLayout";
+import PaymentDialog from "@/components/PaymentDialog";
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [currency, setCurrency] = useState<"inr" | "usd">("inr");
+  const [showPayment, setShowPayment] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState("");
   const { toast } = useToast();
 
   const toggleBillingCycle = () => {
@@ -99,6 +101,14 @@ const Pricing = () => {
     return percentage;
   };
 
+  const handlePaymentSuccess = () => {
+    toast({
+      title: "Plan activated",
+      description: `Your ${selectedPlan} plan has been activated successfully!`,
+    });
+    setShowPayment(false);
+  };
+
   return (
     <PageLayout>
       <div className="container px-4 py-16 md:py-24">
@@ -154,6 +164,8 @@ const Pricing = () => {
                     plan.price[currency].yearly
                   )
                 : 0;
+
+
 
             return (
               <Card
@@ -230,18 +242,16 @@ const Pricing = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Link to="/signup" className="w-full">
-                    <Button
-                      variant={plan.popular ? "default" : "outline"}
-                      className={`w-full ${
-                        plan.popular
-                          ? "bg-echopurple-600 hover:bg-echopurple-700"
-                          : ""
-                      }`}
-                    >
-                      {plan.cta}
-                    </Button>
-                  </Link>
+                  <Button
+                    onClick={() => {
+                      setSelectedPlan(plan.name.toLowerCase());
+                      setShowPayment(true);
+                    }}
+                    className={`w-full ${plan.popular ? 'bg-echopurple-600 hover:bg-echopurple-700' : ''}`}
+                    variant={plan.popular ? 'default' : 'outline'}
+                  >
+                    {plan.cta}
+                  </Button>
                 </CardFooter>
               </Card>
             );
@@ -322,6 +332,12 @@ const Pricing = () => {
           </div>
         </div>
       </div>
+
+      <PaymentDialog
+        open={showPayment}
+        onOpenChange={setShowPayment}
+        onSuccess={handlePaymentSuccess}
+      />
     </PageLayout>
   );
 };

@@ -57,13 +57,19 @@ const ProfileImageUpload = ({ initialImage, onImageChange, userName }: ProfileIm
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
           A professional photo is recommended. Maximum size 2MB.
         </p>
-        <label htmlFor="profile-upload">
-          <div className="cursor-pointer">
-            <Button variant="outline" size="sm" className="cursor-pointer">
-              <Upload className="mr-2 h-4 w-4" />
-              Upload New Picture
-            </Button>
-          </div>
+        <label htmlFor="profile-upload" className="cursor-pointer">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('profile-upload')?.click();
+            }}
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            Upload New Picture
+          </Button>
           <input 
             id="profile-upload" 
             type="file" 

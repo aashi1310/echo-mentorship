@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FileText, Upload, ExternalLink, Search, Filter, Plus, BookOpen, Share2, Eye } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import ResourceUploadDialog from "@/components/ResourceUploadDialog";
 
 // Sample data for resources
 const sharedResources = [
@@ -93,6 +94,7 @@ const externalResources = [
 const MentorResources = () => {
   const [activeTab, setActiveTab] = useState("shared");
   const [searchQuery, setSearchQuery] = useState("");
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
   // Function to handle resource actions
   const handleResourceAction = (resource: any, action: 'view' | 'share' | 'download') => {
@@ -135,11 +137,45 @@ const MentorResources = () => {
   };
 
   // Handle upload
-  const handleUpload = () => {
-    toast({
-      title: "Upload Resource",
-      description: "The upload dialog would open here in a real application.",
-    });
+  const handleUpload = async (resourceData: any) => {
+    try {
+      // Here you would implement the actual file upload logic
+      // For now, we'll just show a success message
+      console.log('Resource data:', resourceData);
+      
+      // Update the resources list (in a real app, this would come from the backend)
+      if (resourceData.visibility === 'shared') {
+        const newResource = {
+          id: sharedResources.length + 1,
+          title: resourceData.title,
+          description: resourceData.description,
+          type: resourceData.type,
+          size: `${Math.round(resourceData.file.size / 1024)} KB`,
+          shared: 0,
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          url: URL.createObjectURL(resourceData.file)
+        };
+        sharedResources.unshift(newResource);
+      } else {
+        const newResource = {
+          id: personalResources.length + 1,
+          title: resourceData.title,
+          description: resourceData.description,
+          type: resourceData.type,
+          size: `${Math.round(resourceData.file.size / 1024)} KB`,
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          url: URL.createObjectURL(resourceData.file)
+        };
+        personalResources.unshift(newResource);
+      }
+    } catch (error) {
+      console.error('Error uploading resource:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload resource. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Filter resources based on search query
@@ -169,10 +205,15 @@ const MentorResources = () => {
             </p>
           </div>
           <div className="mt-4 md:mt-0">
-            <Button onClick={handleUpload}>
+            <Button onClick={() => setUploadDialogOpen(true)}>
               <Upload className="mr-2 h-4 w-4" />
               Upload New Resource
             </Button>
+            <ResourceUploadDialog
+              open={uploadDialogOpen}
+              onOpenChange={setUploadDialogOpen}
+              onUpload={handleUpload}
+            />
           </div>
         </div>
 

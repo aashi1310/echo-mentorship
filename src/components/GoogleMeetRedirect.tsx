@@ -5,44 +5,66 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { Video, ExternalLink, Clock, User, Users } from "lucide-react";
+import { sessionService } from "@/services/sessionService";
 
 const GoogleMeetRedirect = () => {
   const [countdown, setCountdown] = useState(5);
   const navigate = useNavigate();
   const { sessionId } = useParams();
   
-  // Generate a valid Google Meet link with correct meeting code format (10 characters)
-  const generateMeetCode = () => {
-    const chars = 'abcdefghijklmnopqrstuvwxyz';
-    let code = '';
-    
-    // First character must be a letter
-    code += chars[Math.floor(Math.random() * chars.length)];
-    
-    // Remaining 9 characters can be letters or numbers
-    const allChars = chars + '0123456789';
-    for (let i = 0; i < 9; i++) {
-      const randomIndex = Math.floor(Math.random() * allChars.length);
-      code += allChars[randomIndex];
+  const [sessionDetails, setSessionDetails] = useState({
+    id: sessionId || '',
+    meetLink: '',
+    mentorName: '',
+    menteeName: '',
+    topic: '',
+    date: '',
+    time: '',
+    duration: ''
+  });
+
+  useEffect(() => {
+    const fetchSessionDetails = async () => {
+      if (!sessionId) {
+        toast({
+          title: 'Error',
+          description: 'No session ID provided',
+          variant: 'destructive'
+        });
+        navigate(-1);
+        return;
+      }
+
+      try {
+        const session = await sessionService.joinSession(sessionId);
+        if (!session.meetingLink) {
+          throw new Error('No meeting link available');
+        }
+
+        setSessionDetails({
+          id: session.id,
+          meetLink: session.meetingLink,
+          mentorName: session.mentorName || 'Mentor',
+          menteeName: session.menteeName || 'Mentee',
+          topic: session.topic || 'Mentoring Session',
+          date: new Date(session.scheduledAt || Date.now()).toLocaleDateString(),
+          time: new Date(session.scheduledAt || Date.now()).toLocaleTimeString(),
+          duration: `${session.duration || 60} minutes`
+        });
+      } catch (error) {
+        toast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Failed to load session details. Please try again.',
+          variant: 'destructive'
+        });
+        navigate(-1);
+      }
+    };
+
+    if (sessionId) {
+      fetchSessionDetails();
     }
-    
-    return code;
-  };
-  
-  const meetCode = generateMeetCode();
-  const meetLink = `https://meet.google.com/${meetCode}`;
-  
-  // In a real app, you would fetch the session details from your backend
-  const sessionDetails = {
-    id: sessionId || "123456",
-    meetLink: meetLink,
-    mentorName: "Rajat Kumar",
-    menteeName: "Ankit Sharma",
-    topic: "Career Transition to Product Management",
-    date: new Date().toLocaleDateString(),
-    time: new Date().toLocaleTimeString(),
-    duration: "45 minutes",
-  };
+  }, [sessionId, navigate]);
   
   useEffect(() => {
     let timer: number | undefined;

@@ -7,25 +7,36 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
+import DocumentUploader from "./DocumentUploader";
 
 interface PublicProfileFormProps {
   initialName: string;
   initialTitle: string;
   initialBio: string;
-  initialImage: string;
+  initialResume?: ResumeFile;
+  initialCertificates?: string[];
   initialInterests: string[];
+}
+
+interface ResumeFile {
+  name: string;
+  uploadDate: string;
+  size: string;
+  file: File | null;
 }
 
 const PublicProfileForm = ({
   initialName,
   initialTitle,
   initialBio,
-  initialImage,
+  initialResume,
+  initialCertificates = [],
   initialInterests,
 }: PublicProfileFormProps) => {
   const [name, setName] = useState(initialName);
   const [title, setTitle] = useState(initialTitle);
   const [bio, setBio] = useState(initialBio);
+  const [resume, setResume] = useState<ResumeFile | undefined>(initialResume);
   const [interests, setInterests] = useState(initialInterests);
   const [newInterest, setNewInterest] = useState("");
   
@@ -47,7 +58,8 @@ const PublicProfileForm = ({
     if (user) {
       setUser({
         ...user,
-        name: name
+        name,
+        bio,
       });
     }
     
@@ -57,8 +69,21 @@ const PublicProfileForm = ({
     });
   };
   
+  const handleResumeChange = (newResume: ResumeFile) => {
+    setResume(newResume);
+  };
+
   return (
     <div className="space-y-6">
+      <DocumentUploader
+        initialResumeFile={resume || {
+          name: "No resume uploaded",
+          uploadDate: new Date().toLocaleDateString(),
+          size: "0 MB",
+          file: null
+        }}
+        onDocumentChange={handleResumeChange}
+      />
       <div className="space-y-3">
         <div className="grid gap-2">
           <Label htmlFor="name">Full Name</Label>

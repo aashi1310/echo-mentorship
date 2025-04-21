@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import TermsDialog from "@/components/TermsDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import PageLayout from "@/components/layout/PageLayout";
 import { useUser } from "@/contexts/UserContext";
+import { userService } from "@/services/userService";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -36,6 +38,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -75,26 +78,31 @@ const SignUp = () => {
     setIsLoading(true);
 
     try {
-      // Simulate registration
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Create user object with explicit user type
-      const user = {
-        id: Math.random().toString(36).substr(2, 9),
-        name: name,
-        email: email,
-        userType: userType as "mentor" | "mentee",
+      // Use userService for registration
+      const userData = {
+        name,
+        email,
+        password,
+        role: userType as "mentor" | "mentee",
+        field
       };
+
+      const user = await userService.register(userData);
       
+      if (!user || !user.role || !user.token) {
+        throw new Error('Invalid user data received');
+      }
+      
+      // Store auth token and user data
+      localStorage.setItem('authToken', user.token);
+      localStorage.setItem('user', JSON.stringify(user));
+
       // Set user in context
       setUser(user);
       
       // Navigate to the appropriate dashboard based on user type
-      if (userType === "mentor") {
-        navigate("/mentor/dashboard");
-      } else {
-        navigate("/mentee/dashboard");
-      }
+      const dashboardPath = userType === "mentor" ? "/mentor/dashboard" : "/mentee/dashboard";
+      navigate(dashboardPath, { replace: true });
 
       toast({
         title: "Account created successfully",
@@ -225,31 +233,26 @@ const SignUp = () => {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="terms" 
+                  <Checkbox
+                    id="terms"
                     checked={agreedToTerms}
                     onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
                   />
                   <label
                     htmlFor="terms"
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     I agree to the{" "}
-                    <Link
-                      to="/terms"
-                      className="text-echopurple-600 hover:text-echopurple-700 dark:text-echopurple-400 dark:hover:text-echopurple-300 font-medium"
+                    <button
+                      type="button"
+                      onClick={() => setShowTerms(true)}
+                      className="text-echopurple-600 hover:text-echopurple-700 dark:text-echopurple-400 dark:hover:text-echopurple-300 underline"
                     >
-                      terms of service
-                    </Link>{" "}
-                    and{" "}
-                    <Link
-                      to="/privacy"
-                      className="text-echopurple-600 hover:text-echopurple-700 dark:text-echopurple-400 dark:hover:text-echopurple-300 font-medium"
-                    >
-                      privacy policy
-                    </Link>
+                      terms of service and privacy policy
+                    </button>
                   </label>
                 </div>
+                <TermsDialog open={showTerms} onOpenChange={setShowTerms} />
 
                 <Button
                   type="submit"

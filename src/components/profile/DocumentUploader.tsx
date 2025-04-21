@@ -1,8 +1,9 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FileText, Upload } from "lucide-react";
+import { FileText, Upload, Eye } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import DocumentPreview from './DocumentPreview';
 
 interface ResumeFile {
   name: string;
@@ -13,30 +14,75 @@ interface ResumeFile {
 
 interface DocumentUploaderProps {
   initialResumeFile: ResumeFile;
+  onDocumentChange?: (file: ResumeFile | null) => void;
 }
 
-const DocumentUploader = ({ initialResumeFile }: DocumentUploaderProps) => {
+const DocumentUploader = ({ initialResumeFile, onDocumentChange }: DocumentUploaderProps) => {
   const [resumeFile, setResumeFile] = useState<ResumeFile>(initialResumeFile);
+  const [showPreview, setShowPreview] = useState(false);
   
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Convert file size to MB
-      const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      // Format current date
-      const today = new Date();
-      const formattedDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      
-      setResumeFile({
-        name: file.name,
-        uploadDate: formattedDate,
-        size: `${fileSizeMB} MB`,
-        file: file
+    if (!file) {
+      toast({
+        title: "Upload Failed",
+        description: "Please select a file to upload.",
+        variant: "destructive",
       });
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['.pdf', '.doc', '.docx'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (!allowedTypes.includes(fileExtension)) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload a PDF or Word document.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    if (file.size > maxSize) {
+      toast({
+        title: "File Too Large",
+        description: "Please upload a file smaller than 10MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Convert file size to MB
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    // Format current date
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    const newResumeFile = {
+      name: file.name,
+      uploadDate: formattedDate,
+      size: `${fileSizeMB} MB`,
+      file: file
+    };
+
+    try {
+      setResumeFile(newResumeFile);
+      if (onDocumentChange) {
+        onDocumentChange(newResumeFile);
+      }
       
       toast({
         title: "Resume Uploaded",
         description: "Your resume has been successfully uploaded.",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload Failed",
+        description: "An error occurred while uploading your file. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -65,13 +111,22 @@ const DocumentUploader = ({ initialResumeFile }: DocumentUploaderProps) => {
             Uploaded on {resumeFile.uploadDate} • {resumeFile.size}
           </p>
           <div className="flex gap-2 mt-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
-              onClick={viewDocument}
+              onClick={() => setShowPreview(true)}
+              title="Preview"
             >
+              <Eye className="h-4 w-4 mr-2" />
               View
             </Button>
+            {showPreview && resumeFile.file && (
+              <DocumentPreview
+                url={URL.createObjectURL(resumeFile.file)}
+                fileName={resumeFile.name}
+                onClose={() => setShowPreview(false)}
+              />
+            )}
             <label htmlFor="resume-replace">
               <div className="cursor-pointer">
                 <Button variant="outline" size="sm" className="cursor-pointer">

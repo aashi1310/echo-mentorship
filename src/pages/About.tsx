@@ -71,7 +71,7 @@ const About = () => {
 
           <div className="prose dark:prose-invert max-w-none prose-lg">
             <p>
-              Founded in 2023 by Aashika Jain and Divyanshi Agarwal, EchoMentor was born from a shared vision to democratize access to quality mentorship across India. We recognized that while talent is equally distributed, opportunity often isn't. Many professionals struggle to find guidance from experienced mentors who understand their specific challenges and aspirations.
+              Founded in 2025 by Aashika Jain and Divyanshi Agarwal, EchoMentor was born from a shared vision to democratize access to quality mentorship across India. We recognized that while talent is equally distributed, opportunity often isn't. Many professionals struggle to find guidance from experienced mentors who understand their specific challenges and aspirations.
             </p>
             <p>
               Our platform bridges this gap by connecting mentees with verified Indian mentors across diverse industries. We've built a comprehensive ecosystem that goes beyond simple connections – offering structured goal setting, progress tracking, resource sharing, and a supportive community.
@@ -175,7 +175,7 @@ const About = () => {
                   Co-Founder & CEO
                 </p>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Aashika brings 8+ years of experience in educational technology and has a passion for connecting talented mentors with eager mentees. Prior to founding EchoMentor, she led product development at a leading EdTech company.
+                  Aashika brings extensive experience in educational technology and has a passion for connecting talented mentors with eager mentees. She leads the strategic vision and growth of EchoMentor.
                 </p>
               </div>
             </div>

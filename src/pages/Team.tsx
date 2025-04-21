@@ -18,7 +18,7 @@ const Team = () => {
     {
       name: "Aashika Jain",
       role: "Co-Founder & CEO",
-      bio: "Aashika brings 8+ years of experience in educational technology and has a passion for connecting talented mentors with eager mentees. Prior to founding EchoMentor, she led product development at a leading EdTech company.",
+      bio: "Aashika brings extensive experience in educational technology and has a passion for connecting talented mentors with eager mentees. She leads the strategic vision and growth of EchoMentor.",
       image: "/placeholder.svg",
       social: {
         linkedin: "#",

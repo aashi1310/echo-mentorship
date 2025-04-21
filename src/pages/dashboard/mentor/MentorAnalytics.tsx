@@ -1,11 +1,15 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Clock, Users, TrendingUp, Download } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@/contexts/UserContext";
+import { Calendar, Clock, Download, Star, Target, TrendingUp, Users } from "lucide-react";
+import { analyticsService } from "@/services/analyticsService";
+import AnalyticsCharts from "@/components/analytics/AnalyticsCharts";
 
 const MentorAnalytics = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -15,19 +19,19 @@ const MentorAnalytics = () => {
   const kpiData = [
     {
       title: "Total Sessions",
-      value: "84",
+      value: "21",
       change: "+12% from last quarter",
       icon: <Calendar className="h-5 w-5" />,
     },
     {
       title: "Hours Mentored",
-      value: "156",
+      value: "84",
       change: "+8% from last quarter",
       icon: <Clock className="h-5 w-5" />,
     },
     {
       title: "Active Mentees",
-      value: "18",
+      value: "6",
       change: "+5 from last quarter",
       icon: <Users className="h-5 w-5" />,
     },
@@ -53,7 +57,7 @@ const MentorAnalytics = () => {
   const menteeProgress = [
     {
       id: 1,
-      name: "Aisha Patel",
+      name: "Aashika Jain",
       role: "Frontend Developer",
       sessionsCompleted: 12,
       goalsAchieved: 3,
@@ -62,7 +66,7 @@ const MentorAnalytics = () => {
     },
     {
       id: 2,
-      name: "Rahul Sharma",
+      name: "Harsh Shukla",
       role: "UX Designer",
       sessionsCompleted: 8,
       goalsAchieved: 4,
@@ -71,7 +75,7 @@ const MentorAnalytics = () => {
     },
     {
       id: 3,
-      name: "Neha Singh",
+      name: "Karan Singh",
       role: "Product Manager",
       sessionsCompleted: 6,
       goalsAchieved: 2,
@@ -102,7 +106,7 @@ const MentorAnalytics = () => {
   const feedbackData = [
     {
       id: 1,
-      date: "Apr 3, 2023",
+      date: "Apr 3, 2025",
       menteeName: "Rahul Sharma",
       rating: 5,
       comment: "Excellent guidance on system design concepts. I was able to apply the advice directly in my next interview.",
@@ -110,7 +114,7 @@ const MentorAnalytics = () => {
     },
     {
       id: 2,
-      date: "Mar 28, 2023",
+      date: "Mar 28, 2025",
       menteeName: "Aisha Patel",
       rating: 4,
       comment: "Very helpful session on React best practices. Would have appreciated more code examples.",
@@ -126,7 +130,7 @@ const MentorAnalytics = () => {
     },
     {
       id: 4,
-      date: "Mar 10, 2023",
+      date: "Mar 10, 2025",
       menteeName: "Priya Verma",
       rating: 3,
       comment: "Session was informative but felt rushed towards the end. Would prefer more structured agenda next time.",

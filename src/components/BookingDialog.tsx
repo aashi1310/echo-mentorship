@@ -1,21 +1,31 @@
-
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Video } from "lucide-react";
+import { Video, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 import PaymentDialog from "./PaymentDialog";
 import BookingForm from "./booking/BookingForm";
 import ConfirmationView from "./booking/ConfirmationView";
-import { generateGoogleMeetLink } from "@/utils/meetingUtils";
+import { Session, SessionStatus, SessionType } from '@/types/session';
+import { sessionService } from "@/services/sessionService";
+import { generateMeetLink } from "@/utils/meetingUtils";
+
+interface SessionData extends Session {
+  menteeEmail: string;
+  isFollowUp: boolean;
+  type: SessionType | 'crisis';
+  status: SessionStatus;
+  scheduledAt: string;
+  meetingLink?: string;
+}
 
 interface BookingDialogProps {
   mentorName: string;
   trigger?: React.ReactNode;
-  onSessionCreated?: (sessionData: any) => void;
+  onSessionCreated?: (sessionData: SessionData) => void;
 }
 
 const BookingDialog = ({ mentorName, trigger, onSessionCreated }: BookingDialogProps) => {
@@ -30,6 +40,8 @@ const BookingDialog = ({ mentorName, trigger, onSessionCreated }: BookingDialogP
   const { user } = useUser();
 
   const [isFreeSession, setIsFreeSession] = useState(true);
+  const [isCrisisMeeting, setIsCrisisMeeting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (user && user.sessionsBooked && user.sessionsBooked > 0) {
@@ -39,19 +51,14 @@ const BookingDialog = ({ mentorName, trigger, onSessionCreated }: BookingDialogP
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    navigate("/mentee/sessions");
-    
-    setStep(1);
     setOpen(false);
-    
-    toast({
-      title: "Session booked successfully!",
-      description: `Your session with ${mentorName} has been scheduled for ${date ? format(date, 'PPP') : ''} at ${time}.`,
-    });
+    setStep(1);
+    navigate("/mentee/sessions");
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    if (isSubmitting) return;
+
     if (!date || !time || !topic) {
       toast({
         title: "Missing information",
@@ -61,40 +68,76 @@ const BookingDialog = ({ mentorName, trigger, onSessionCreated }: BookingDialogP
       return;
     }
 
-    if (!isFreeSession) {
-      setShowPayment(true);
-      return;
+    setIsSubmitting(true);
+    try {
+      if (!isFreeSession) {
+        setShowPayment(true);
+      } else {
+        const success = await proceedWithBooking();
+        if (success) {
+          setStep(2);
+        }
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    proceedWithBooking();
   };
   
-  const proceedWithBooking = () => {
-    setStep(2);
-    const meetLink = generateGoogleMeetLink();
+  const proceedWithBooking = async () => {
+    const meetLink = generateMeetLink();
     
-    const sessionData = {
-      id: Date.now().toString(),
+    const sessionData: SessionData = {
+      mentorId: user!.mentorId,
+      menteeId: user!.id,
       mentorName: mentorName,
-      date: date ? format(date, 'PPP') : '',
-      time: time,
+      menteeName: user!.name,
+      mentorEmail: user!.mentorEmail || '',
+      menteeEmail: user!.email,
+      scheduledAt: new Date(`${format(date!, 'yyyy-MM-dd')}T${time}`).toISOString(),
       topic: topic,
-      duration: `${duration} minutes`,
-      meetLink: meetLink,
+      duration: parseInt(duration),
+      type: isCrisisMeeting ? 'crisis' : 'general',
       status: "upcoming",
-      createdAt: new Date().toISOString()
+      isFollowUp: false,
+      notes: "",
+      meetingLink: meetLink,
+      date: format(date!, 'yyyy-MM-dd'),
+      time: time,
+      id: "",
+      isFreeSession: isFreeSession
     };
+
+    const response = await sessionService.createSession(sessionData);
     
     if (onSessionCreated) {
-      onSessionCreated(sessionData);
+      onSessionCreated({
+        ...sessionData,
+        id: response.id,
+        menteeEmail: user!.email,
+        isFollowUp: false,
+        type: 'general',
+        status: 'upcoming'
+      });
     }
-    
-    console.log("Session created:", sessionData);
+
+    if (user) {
+      user.sessionsBooked = (user.sessionsBooked || 0) + 1;
+    }
+
+    toast({
+      title: "Session Booked Successfully!",
+      description: `Your session with ${mentorName} has been scheduled for ${format(date!, 'PPP')} at ${time}.`,
+    });
+
+    return true;
   };
   
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = async () => {
     setShowPayment(false);
-    proceedWithBooking();
+    const success = await proceedWithBooking();
+    if (success) {
+      setStep(2);
+    }
   };
 
   return (
@@ -108,9 +151,21 @@ const BookingDialog = ({ mentorName, trigger, onSessionCreated }: BookingDialogP
           {step === 1 ? (
             <>
               <DialogHeader>
-                <DialogTitle>Book a {isFreeSession ? 'Free Trial' : ''} Session</DialogTitle>
+                <DialogTitle>
+                  {isCrisisMeeting ? (
+                    <div className="flex items-center gap-2 text-red-600">
+                      <AlertTriangle className="h-5 w-5" />
+                      Book an Urgent Crisis Meeting
+                    </div>
+                  ) : (
+                    <>Book a {isFreeSession ? 'Free Trial' : ''} Session</>
+                  )}
+                </DialogTitle>
                 <DialogDescription>
-                  Schedule a {isFreeSession ? 'free trial' : ''} session with {mentorName}.
+                  {isCrisisMeeting
+                    ? "Request an immediate consultation for urgent situations."
+                    : `Schedule a ${isFreeSession ? 'free trial' : ''} session with ${mentorName}.`
+                  }
                 </DialogDescription>
               </DialogHeader>
               
@@ -125,6 +180,8 @@ const BookingDialog = ({ mentorName, trigger, onSessionCreated }: BookingDialogP
                 setTopic={setTopic}
                 onComplete={handleComplete}
                 isFreeSession={isFreeSession}
+                isCrisisMeeting={isCrisisMeeting}
+                setIsCrisisMeeting={setIsCrisisMeeting}
               />
             </>
           ) : (

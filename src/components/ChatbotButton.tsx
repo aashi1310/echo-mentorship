@@ -6,10 +6,14 @@ import { Input } from "@/components/ui/input";
 
 const ChatbotButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
-    { text: "Hi there! 👋 I'm the EchoMentor assistant. How can I help you today?", isUser: false },
+  const [messages, setMessages] = useState<{ text: string; isUser: boolean; isCrisis?: boolean }[]>([
+    { 
+      text: "Hi there! 👋 I'm the EchoMentor assistant. If you need immediate crisis support, type 'help' or click the emergency button below.", 
+      isUser: false 
+    },
   ]);
   const [input, setInput] = useState("");
+  const [showCrisisButton, setShowCrisisButton] = useState(true);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +26,15 @@ const ChatbotButton = () => {
     // Simulate bot response after a short delay
     setTimeout(() => {
       let botResponse = "I'm still learning! Please contact our support team for more help.";
+      let isCrisis = false;
       
-      // Simple response logic
-      if (input.toLowerCase().includes("mentor")) {
+      // Crisis support logic
+      if (input.toLowerCase().includes('help') || input.toLowerCase().includes('emergency') || input.toLowerCase().includes('crisis')) {
+        botResponse = "I understand you might need immediate support. Our crisis counselors are available 24/7 at 1-800-XXX-XXXX. Would you like me to connect you with a counselor right now?";
+        isCrisis = true;
+      }
+      // Regular response logic
+      else if (input.toLowerCase().includes("mentor")) {
         botResponse = "You can find mentors by visiting our Find Mentors page or by signing up as a mentee.";
       } else if (input.toLowerCase().includes("price") || input.toLowerCase().includes("cost")) {
         botResponse = "We offer various pricing plans. Check our Pricing page for more details. We also offer a free trial session!";
@@ -34,7 +44,8 @@ const ChatbotButton = () => {
         botResponse = "Sessions can be booked after signing up. Mentors set their availability, and you can choose a suitable time slot.";
       }
 
-      setMessages(prev => [...prev, { text: botResponse, isUser: false }]);
+      setMessages(prev => [...prev, { text: botResponse, isUser: false, isCrisis }]);
+      if (isCrisis) setShowCrisisButton(false);
     }, 1000);
   };
 
@@ -67,14 +78,14 @@ const ChatbotButton = () => {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${
-                  message.isUser ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`max-w-[80%] rounded-lg p-3 ${
                     message.isUser
                       ? "bg-echopurple-600 text-white"
+                      : message.isCrisis
+                      ? "bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100 border-2 border-red-500"
                       : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   }`}
                 >
@@ -82,6 +93,20 @@ const ChatbotButton = () => {
                 </div>
               </div>
             ))}
+            {showCrisisButton && (
+              <div className="flex justify-center mt-4">
+                <Button
+                  variant="destructive"
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                  onClick={() => {
+                    setInput("I need help");
+                    handleSendMessage(new Event('submit') as unknown as React.FormEvent);
+                  }}
+                >
+                  🆘 Get Emergency Support
+                </Button>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 dark:border-gray-800">

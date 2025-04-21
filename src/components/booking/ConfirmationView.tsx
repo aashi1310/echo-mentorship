@@ -4,26 +4,38 @@ import { format } from "date-fns";
 import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Video } from "lucide-react";
-import { generateGoogleMeetLink } from "@/utils/meetingUtils";
+import { generateMeetLink } from "@/utils/meetingUtils";
 
 interface ConfirmationViewProps {
   date: Date | undefined;
   time: string;
-  duration: string;
   topic: string;
+  duration: string;
   isFreeSession: boolean;
   onSubmit: (e: React.FormEvent) => void;
+  onConfirm?: () => void;
 }
 
-const ConfirmationView = ({
-  date,
-  time,
-  duration,
-  topic,
-  isFreeSession,
-  onSubmit
-}: ConfirmationViewProps) => {
-  const meetLink = generateGoogleMeetLink();
+const ConfirmationView = ({ date, time, topic, duration, isFreeSession, onSubmit, onConfirm }: ConfirmationViewProps) => {
+  const meetLink = generateMeetLink();
+
+  const handleConfirmation = (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!date || !time || !topic) {
+        throw new Error('Missing required session information');
+      }
+      onSubmit(e);
+      onConfirm?.();
+    } catch (error) {
+      console.error('Confirmation error:', error);
+      toast({
+        title: "Error",
+        description: "Please ensure all required fields are filled",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <>
@@ -64,7 +76,7 @@ const ConfirmationView = ({
       </div>
       
       <DialogFooter>
-        <Button onClick={onSubmit}>Done</Button>
+        <Button onClick={handleConfirmation}>Done</Button>
       </DialogFooter>
     </>
   );

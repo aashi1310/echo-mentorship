@@ -15,9 +15,9 @@ const DashboardLayout = ({ children, userType }: DashboardLayoutProps) => {
   const { user } = useUser();
   const navigate = useNavigate();
 
-  // Redirect if user type doesn't match the dashboard type
-  if (user && user.userType !== userType) {
-    navigate(`/${user.userType}/dashboard`);
+  // Redirect if user role doesn't match the dashboard type
+  if (user && user.role !== userType) {
+    navigate(`/${user.role}/dashboard`);
     return null;
   }
 

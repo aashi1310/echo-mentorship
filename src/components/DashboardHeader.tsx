@@ -20,7 +20,7 @@ interface DashboardHeaderProps {
 
 const DashboardHeader = ({ userType, collapsed }: DashboardHeaderProps) => {
   const { user, logout } = useUser();
-  const userName = user?.name || (userType === "mentor" ? "Rajat Kumar" : "Priya Sharma");
+  const userName = user?.name || (userType === "mentor" ? "Rajat Kumar" : "Harsh Shukla");
   const userRole = userType === "mentor" ? "Mentor" : "Mentee";
   
   // Create initials from user name
@@ -107,7 +107,7 @@ const DashboardHeader = ({ userType, collapsed }: DashboardHeaderProps) => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center space-x-2">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={userName} />
+                <AvatarImage src={user?.avatar || (userName === "Harsh Shukla" ? "/mentors/harsh-shukla.svg" : userName === "Karan" ? "/mentors/karan.svg" : "/placeholder.svg")} alt={userName} />
                 <AvatarFallback>
                   {getInitials(userName)}
                 </AvatarFallback>

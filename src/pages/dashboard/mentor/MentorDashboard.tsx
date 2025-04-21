@@ -7,91 +7,111 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Calendar, Clock, Users, FileText, ArrowRight } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
+import { isSessionActive } from "@/utils/sessionUtils";
 
 const MentorDashboard = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const mentorName = user?.name || "Rajat Kumar";
   
-  const upcomingSessions = [
-    {
-      id: 1,
-      menteeName: "Aisha Patel",
-      menteeAvatar: "/placeholder.svg",
-      menteeInitials: "AP",
-      date: "Today",
-      time: "3:00 PM - 4:00 PM",
-      topic: "Career Growth Strategy",
-      notes: "Discuss 5-year plan and potential skill gaps",
-    },
-    {
-      id: 2,
-      menteeName: "Rahul Sharma",
-      menteeAvatar: "/placeholder.svg",
-      menteeInitials: "RS",
-      date: "Tomorrow",
-      time: "10:00 AM - 11:00 AM",
-      topic: "Technical Interview Preparation",
-      notes: "Focus on system design questions",
-    },
-    {
-      id: 3,
-      menteeName: "Priya Verma",
-      menteeAvatar: "/placeholder.svg",
-      menteeInitials: "PV",
-      date: "Apr 12, 2023",
-      time: "2:00 PM - 3:00 PM",
-      topic: "Feedback on Portfolio",
-      notes: "Review latest project additions",
-    },
-  ];
+  const getMenteeData = (mentorName) => {
+    if (mentorName.includes("Divyanshi")) {
+      return {
+        upcomingSessions: [
+          {
+            id: 1,
+            menteeName: "Aashika Jain",
+            menteeAvatar: "/placeholder.svg",
+            menteeInitials: "AJ",
+            date: "Today",
+            time: "3:00 PM - 4:00 PM",
+            topic: "Career Growth Strategy",
+            notes: "Discuss 5-year plan and potential skill gaps",
+          }
+        ],
+        recentMentees: [
+          {
+            id: 1,
+            name: "Aashika Jain",
+            avatar: "/placeholder.svg",
+            initials: "AJ",
+            role: "Frontend Developer",
+            lastSession: "Apr 3, 2023",
+            progress: "On track",
+          }
+        ]
+      };
+    } else if (mentorName.includes("Priyank")) {
+      return {
+        upcomingSessions: [
+          {
+            id: 1,
+            menteeName: "Harsh Shukla",
+            menteeAvatar: "/mentors/harsh-shukla.svg",
+            menteeInitials: "HS",
+            date: "Today",
+            time: "2:00 PM - 3:00 PM",
+            topic: "Technical Interview Preparation",
+            notes: "Focus on system design questions",
+          },
+          {
+            id: 2,
+            menteeName: "Karan",
+            menteeAvatar: "/mentors/karan.svg",
+            menteeInitials: "K",
+            date: "Tomorrow",
+            time: "11:00 AM - 12:00 PM",
+            topic: "Code Review Session",
+            notes: "Review recent project implementation",
+          }
+        ],
+        recentMentees: [
+          {
+            id: 1,
+            name: "Harsh Shukla",
+            avatar: "/mentors/harsh-shukla.svg",
+            initials: "HS",
+            role: "Backend Developer",
+            lastSession: "Apr 3, 2023",
+            progress: "On track",
+          },
+          {
+            id: 2,
+            name: "Karan",
+            avatar: "/mentors/karan.svg",
+            initials: "K",
+            role: "Full Stack Developer",
+            lastSession: "Apr 1, 2023",
+            progress: "Ahead of schedule",
+          }
+        ]
+      };
+    } else {
+      return {
+        upcomingSessions: [],
+        recentMentees: []
+      };
+    }
+  };
 
-  const recentMentees = [
-    {
-      id: 1,
-      name: "Vikram Malhotra",
-      avatar: "/placeholder.svg",
-      initials: "VM",
-      role: "Frontend Developer",
-      lastSession: "Apr 3, 2023",
-      progress: "On track",
-    },
-    {
-      id: 2,
-      name: "Neha Singh",
-      avatar: "/placeholder.svg",
-      initials: "NS",
-      role: "UX Designer",
-      lastSession: "Apr 1, 2023",
-      progress: "Ahead of schedule",
-    },
-    {
-      id: 3,
-      name: "Arjun Das",
-      avatar: "/placeholder.svg",
-      initials: "AD",
-      role: "Product Manager",
-      lastSession: "Mar 28, 2023",
-      progress: "Needs attention",
-    },
-  ];
+  const { upcomingSessions, recentMentees } = getMenteeData(mentorName);
 
   const statistics = [
     {
       title: "Total Sessions",
-      value: "43",
+      value: "21",
       change: "+12% from last month",
       icon: <Calendar className="h-5 w-5" />,
     },
     {
       title: "Hours Mentored",
-      value: "72",
+      value: "84",
       change: "+8% from last month",
       icon: <Clock className="h-5 w-5" />,
     },
     {
       title: "Active Mentees",
-      value: "12",
+      value: "6",
       change: "+3 new mentees",
       icon: <Users className="h-5 w-5" />,
     },
@@ -146,22 +166,32 @@ const MentorDashboard = () => {
             <CardContent>
               <div className="space-y-6">
                 {upcomingSessions.map((session) => (
-                  <div key={session.id} className="flex items-center">
-                    <Avatar className="h-9 w-9 mr-3">
-                      <AvatarImage src={session.menteeAvatar} alt={session.menteeName} />
-                      <AvatarFallback>{session.menteeInitials}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">{session.menteeName}</div>
+                  <div key={session.id} className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Avatar className="h-9 w-9 mr-3">
+                        <AvatarImage src={session.menteeAvatar} alt={session.menteeName} />
+                        <AvatarFallback>{session.menteeInitials}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium">{session.menteeName}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            {session.date}, {session.time}
+                          </div>
+                        </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {session.date}, {session.time}
+                          {session.topic}
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {session.topic}
-                      </div>
                     </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => navigate(`/join-session/${session.id}`)}
+                      disabled={!isSessionActive({ date: session.date, time: session.time })}
+                    >
+                      {isSessionActive({ date: session.date, time: session.time }) ? 'Join' : 'Not Started'}
+                    </Button>
                   </div>
                 ))}
               </div>

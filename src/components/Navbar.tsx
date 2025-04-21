@@ -37,7 +37,7 @@ const Navbar = () => {
     { name: "Find Mentors", path: "/find-mentors" },
     { name: "Resources", path: "/resources" },
     { name: "Pricing", path: "/pricing" },
-    { name: "Success Stories", path: "/success-stories" },
+    { name: "Echo Diaries", path: "/success-stories" },
     { name: "FAQ", path: "/faq" },
     { name: "Contact", path: "/contact" },
   ];

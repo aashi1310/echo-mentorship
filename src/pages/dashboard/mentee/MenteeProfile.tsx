@@ -24,8 +24,8 @@ const MenteeProfile = () => {
   const [interests, setInterests] = useState(["Product Management", "UX Research", "Analytics", "Leadership"]);
 
   const initialResumeFile = {
-    name: "Resume_Priya_Sharma.pdf",
-    uploadDate: "Apr 5, 2023",
+    name: "Resume.pdf",
+    uploadDate: "Apr 5, 2025",
     size: "1.2 MB",
     file: null
   };
@@ -59,7 +59,6 @@ const MenteeProfile = () => {
                 initialName={name}
                 initialTitle={title}
                 initialBio={bio}
-                initialImage={profileImage}
                 initialInterests={interests}
               />
             </CardContent>

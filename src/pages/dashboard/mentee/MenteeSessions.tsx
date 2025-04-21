@@ -9,50 +9,66 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, Video, MessageSquare, FileText } from "lucide-react";
 import { format } from "date-fns";
 import BookingDialog from "@/components/BookingDialog";
+import RescheduleSessionDialog from "@/components/RescheduleSessionDialog";
+import FollowUpSessionDialog from "@/components/FollowUpSessionDialog";
 import { useNavigate } from "react-router-dom";
 
 // Sample data for the sessions
 const initialUpcomingSessions = [
   {
     id: 1,
-    mentor: "Rajat Kumar",
+    mentor: "Divyanshi Agarwal",
     date: "Today",
     time: "5:00 PM",
     topic: "Career Transition",
-    image: "/placeholder.svg",
-    type: "video"
+    image: "/mentors/divyanshi-agarwal.svg",
+    type: "video",
+    mentee: "Aashika"
   },
   {
     id: 2,
-    mentor: "Meera Patel",
+    mentor: "Priyank Mishra",
     date: "Next Tuesday",
     time: "4:30 PM",
     topic: "Technical Interview Prep",
-    image: "/placeholder.svg",
-    type: "chat"
+    image: "/mentors/priyank-mishra.svg",
+    type: "chat",
+    mentee: "Harsh"
+  },
+  {
+    id: 3,
+    mentor: "Priyank Mishra",
+    date: "Next Wednesday",
+    time: "3:30 PM",
+    topic: "Code Review",
+    image: "/mentors/priyank-mishra.svg",
+    type: "video",
+    mentee: "Karan"
   }
 ];
 
 const pastSessions = [
   {
     id: 4,
-    mentor: "Rajat Kumar",
+    mentor: "Divyanshi Agarwal",
     date: "Apr 5",
     time: "4:00 PM",
     topic: "Resume Review",
-    image: "/placeholder.svg",
+    image: "/mentors/divyanshi-agarwal.svg",
     type: "video",
-    notes: "Discussed improvements to resume layout and content. Action items: Reorganize experience section, add metrics, update skills."
+    notes: "Discussed improvements to resume layout and content. Action items: Reorganize experience section, add metrics, update skills.",
+    mentee: "Aashika"
   },
   {
     id: 5,
-    mentor: "Meera Patel",
+    mentor: "Priyank Mishra",
     date: "Mar 28",
     time: "5:30 PM",
     topic: "Career Planning",
-    image: "/placeholder.svg",
+    image: "/mentors/priyank-mishra.svg",
     type: "chat",
-    notes: "Mapped out 6-month career transition plan. Key focus: networking, building portfolio projects, interview preparation."
+    notes: "Mapped out 6-month career transition plan. Key focus: networking, building portfolio projects, interview preparation.",
+    mentee: "Harsh"
   }
 ];
 
@@ -89,6 +105,9 @@ const recommendedMentors = [
 const MenteeSessions = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [upcomingSessions, setUpcomingSessions] = useState(initialUpcomingSessions);
+  const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+  const [isFollowUpOpen, setIsFollowUpOpen] = useState(false);
   const navigate = useNavigate();
 
   // Handler for creating a new session
@@ -100,7 +119,8 @@ const MenteeSessions = () => {
       time: sessionData.time,
       topic: sessionData.topic,
       image: "/placeholder.svg",
-      type: "video"
+      type: "video",
+      mentee: sessionData.mentee || "Anonymous"
     };
     
     setUpcomingSessions(prev => [...prev, newSession]);
@@ -178,8 +198,25 @@ const MenteeSessions = () => {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedSession(session);
+                              setIsRescheduleOpen(true);
+                            }}
+                          >
                             Reschedule
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedSession(session);
+                              setIsFollowUpOpen(true);
+                            }}
+                          >
+                            Follow-up
                           </Button>
                           <Button 
                             size="sm"
@@ -248,7 +285,13 @@ const MenteeSessions = () => {
                               <FileText className="h-4 w-4 mr-1" />
                               Download Notes
                             </Button>
-                            <Button size="sm">
+                            <Button 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedSession(session);
+                                setIsFollowUpOpen(true);
+                              }}
+                            >
                               Book Follow-up
                             </Button>
                           </div>
@@ -383,6 +426,31 @@ const MenteeSessions = () => {
             </Card>
           </TabsContent>
         </Tabs>
+        {selectedSession && (
+          <>
+            <RescheduleSessionDialog
+              open={isRescheduleOpen}
+              onOpenChange={setIsRescheduleOpen}
+              sessionDetails={{
+                id: selectedSession.id,
+                mentor: selectedSession.mentor,
+                topic: selectedSession.topic,
+                date: selectedSession.date,
+                time: selectedSession.time
+              }}
+              userType="mentee"
+            />
+            <FollowUpSessionDialog
+              open={isFollowUpOpen}
+              onOpenChange={setIsFollowUpOpen}
+              sessionDetails={{
+                id: selectedSession.id,
+                mentor: selectedSession.mentor,
+                topic: selectedSession.topic
+              }}
+            />
+          </>
+        )}
       </div>
     </DashboardLayout>
   );

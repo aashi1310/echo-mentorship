@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, CheckCircle2, MessageSquare, Star } from "lucide-react";
+import { getMenteeSessions } from "@/utils/api";
+import BookingDialog from "@/components/BookingDialog";
 import {
   Table,
   TableBody,
@@ -34,6 +36,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
+import { Session, UpcomingSession } from '@/types/session';
+import QuizGame from "@/components/quiz/QuizGame";
+
 
 const data = [
   {
@@ -99,17 +104,46 @@ const PaymentDialog = ({ mentorName }: { mentorName?: string }) => {
 }
 
 const MenteeDashboard = () => {
-  const [upcomingSession, setUpcomingSession] = useState({
-    mentor: "Rajat Kumar",
-    date: new Date().toLocaleDateString(),
-    time: "4:00 PM",
-    id: 1
-  });
   const navigate = useNavigate();
   const { user } = useUser();
+  const [upcomingSession, setUpcomingSession] = useState<UpcomingSession | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        if (user?.name) {
+          const sessions = await getMenteeSessions(user.name);
+          const upcoming = sessions.find((s: Session) => s.status === 'upcoming');
+          if (upcoming) {
+            setUpcomingSession({
+              id: upcoming.id,
+              mentor: upcoming.mentorName,
+              mentorName: upcoming.mentorName,
+              date: new Date(upcoming.date).toLocaleDateString(),
+              time: upcoming.time,
+              status: upcoming.status,
+              sessionFormat: upcoming.sessionFormat || 'video',
+              type: upcoming.type || 'general',
+              topic: upcoming.topic,
+              image: upcoming.image || '/mentors/placeholder.svg'
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching sessions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSessions();
+  }, [user?.name]);
   
   const handleJoinSession = () => {
-    navigate(`/join-session/${upcomingSession.id}`);
+    if (upcomingSession?.id) {
+      navigate(`/join-session/${upcomingSession.id}`);
+    }
   };
 
   return (
@@ -132,39 +166,41 @@ const MenteeDashboard = () => {
               <CardDescription>Your next session is scheduled soon</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                <span>{upcomingSession.date}, {upcomingSession.time}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg" alt="Mentor Avatar" />
-                  <AvatarFallback>RK</AvatarFallback>
-                </Avatar>
-                <span>With {upcomingSession.mentor}</span>
-              </div>
-              <Button variant="secondary" onClick={handleJoinSession}>Join Session</Button>
+              {isLoading ? (
+                <div className="text-center py-4">Loading...</div>
+              ) : upcomingSession ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                    <span>{upcomingSession.date}, {upcomingSession.time}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={upcomingSession.image} alt={`${upcomingSession.mentor} Avatar`} />
+                      <AvatarFallback>{upcomingSession.mentor.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <span>With {upcomingSession.mentor}</span>
+                  </div>
+                  <Button variant="secondary" onClick={handleJoinSession}>Join Session</Button>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-gray-500 mb-4">No upcoming sessions</p>
+                  <BookingDialog mentorName="Choose a mentor" />
+                </div>
+              )}
             </CardContent>
           </Card>
 
+  
+
           <Card>
             <CardHeader>
-              <CardTitle>Mentorship Goals</CardTitle>
-              <CardDescription>Stay focused on your objectives</CardDescription>
+              <CardTitle>Learning Games</CardTitle>
+              <CardDescription>Test your knowledge with interactive quizzes</CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <span>Complete 3 online courses</span>
-                <Badge variant="secondary">66%</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Network with 5 industry experts</span>
-                <Badge variant="secondary">20%</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Create a portfolio website</span>
-                <Badge variant="secondary">0%</Badge>
-              </div>
+            <CardContent>
+              <QuizGame />
             </CardContent>
           </Card>
 
@@ -206,16 +242,18 @@ const MenteeDashboard = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">{upcomingSession.date}</TableCell>
-                  <TableCell>{upcomingSession.mentor}</TableCell>
-                  <TableCell>React Fundamentals</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" onClick={handleJoinSession}>
-                      Join
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                {upcomingSession && (
+                  <TableRow>
+                    <TableCell className="font-medium">{upcomingSession.date}</TableCell>
+                    <TableCell>{upcomingSession.mentor}</TableCell>
+                    <TableCell>React Fundamentals</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="outline" size="sm" onClick={handleJoinSession}>
+                        Join
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )}
                 <TableRow>
                   <TableCell className="font-medium">Apr 7, 2024</TableCell>
                   <TableCell>Mentor Smith</TableCell>
@@ -224,6 +262,73 @@ const MenteeDashboard = () => {
                 </TableRow>
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recommended Mentors</CardTitle>
+            <CardDescription>Connect with experienced mentors ready to help you</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="flex items-start space-x-4 p-4 border rounded-lg">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src="/mentors/divyanshi-agarwal.svg" alt="Divyanshi Agarwal" />
+                  <AvatarFallback>DA</AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-semibold">Divyanshi Agarwal</h4>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">Crisis Ready</Badge>
+                  </div>
+                  <p className="text-sm text-gray-500">Full Stack Developer | 5+ years experience</p>
+                  <Button variant="outline" size="sm">Book Session</Button>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 p-4 border rounded-lg">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src="/mentors/priyank-mishra.svg" alt="Priyank Mishra" />
+                  <AvatarFallback>PM</AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-semibold">Priyank Mishra</h4>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">Crisis Ready</Badge>
+                  </div>
+                  <p className="text-sm text-gray-500">Senior Software Engineer | Tech Lead</p>
+                  <Button variant="outline" size="sm">Book Session</Button>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 p-4 border rounded-lg">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src="/mentors/placeholder.svg" alt="Rajat Kumar" />
+                  <AvatarFallback>RK</AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-semibold">Rajat Kumar</h4>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">Crisis Ready</Badge>
+                  </div>
+                  <p className="text-sm text-gray-500">Frontend Developer | UX Specialist</p>
+                  <Button variant="outline" size="sm">Book Session</Button>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4 p-4 border rounded-lg">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src="/mentors/placeholder.svg" alt="Neha Singh" />
+                  <AvatarFallback>NS</AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-semibold">Neha Singh</h4>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">Crisis Ready</Badge>
+                  </div>
+                  <p className="text-sm text-gray-500">Backend Developer | System Design</p>
+                  <Button variant="outline" size="sm">Book Session</Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

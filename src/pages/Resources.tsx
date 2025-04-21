@@ -38,6 +38,7 @@ interface Resource {
   featured: boolean;
   duration?: string;
   thumbnail: string;
+  url: string;
 }
 
 const Resources = () => {
@@ -47,88 +48,96 @@ const Resources = () => {
   const resources: Resource[] = [
     {
       id: 1,
-      title: "The Ultimate Guide to Technical Interviews",
-      description: "Comprehensive preparation guide covering algorithms, data structures, system design, and behavioral questions.",
+      title: "System Design Interview Preparation Guide",
+      description: "A comprehensive guide to ace system design interviews at top tech companies.",
       type: "guide",
       category: "career",
       premium: false,
       featured: true,
       duration: "25 min read",
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/file/d/1Ks8KGxKnb9D9MC8qkXR4gZkWqCgbZoBH/view"
     },
     {
       id: 2,
-      title: "Building an Effective Resume for Tech Roles",
-      description: "Learn how to create a standout tech resume that gets past ATS and catches the recruiter's eye.",
-      type: "article",
+      title: "Tech Resume Writing Workshop",
+      description: "Video workshop on crafting an impactful tech resume with real examples.",
+      type: "video",
       category: "career",
       premium: false,
       featured: false,
-      duration: "10 min read",
+      duration: "45 min",
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/file/d/1MnR8wJkX9RxDg7vHbJ2qPwEjkL5K9Ytz/view"
     },
     {
       id: 3,
-      title: "Career Transition Roadmap: Non-Tech to Tech",
-      description: "A step-by-step guide for professionals looking to transition into technical roles from non-technical backgrounds.",
+      title: "Data Structures & Algorithms Study Plan",
+      description: "Structured learning path for mastering DSA with practice problems.",
       type: "guide",
       category: "career",
       premium: true,
       featured: true,
       duration: "30 min read",
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/file/d/1NpQ8Kw3Rj2Q9X7YtL5mVfK8L2pJ3V9Zn/view"
     },
     {
       id: 4,
-      title: "Effective Communication Skills for Professionals",
-      description: "Master the art of clear and persuasive communication in workplace settings with practical exercises.",
+      title: "Software Architecture Fundamentals",
+      description: "Learn core concepts of software architecture with practical examples.",
       type: "video",
       category: "skills",
       premium: false,
       featured: false,
-      duration: "45 min",
+      duration: "1.5 hours",
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/file/d/1P8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn/view"
     },
     {
       id: 5,
-      title: "Goal Setting & OKR Template",
-      description: "Ready-to-use template for setting professional goals and tracking progress using the OKR framework.",
+      title: "Project Management Templates Bundle",
+      description: "Collection of essential PM templates including sprint planning and retrospectives.",
       type: "template",
       category: "productivity",
       premium: true,
       featured: false,
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/drive/folders/1Q8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn"
     },
     {
       id: 6,
-      title: "Mastering Product Management: From Idea to Launch",
-      description: "Comprehensive video series on product management principles, methodologies, and best practices.",
+      title: "Full Stack Development Bootcamp",
+      description: "Complete video course covering modern full stack development.",
       type: "video",
       category: "skills",
       premium: true,
       featured: true,
-      duration: "3.5 hours",
+      duration: "8 hours",
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/drive/folders/1R8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn"
     },
     {
       id: 7,
-      title: "Leadership Toolkit for New Managers",
-      description: "Essential resources for first-time managers, including templates, checklists, and practical advice.",
+      title: "Tech Leadership Case Studies",
+      description: "Real-world case studies on engineering leadership and team management.",
       type: "toolkit",
       category: "leadership",
       premium: true,
       featured: true,
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/file/d/1S8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn/view"
     },
     {
       id: 8,
-      title: "Networking Scripts for Industry Events",
-      description: "Practical conversation starters and follow-up templates for effective professional networking.",
+      title: "System Design Templates & Diagrams",
+      description: "Ready-to-use templates for system design interviews and documentation.",
       type: "template",
       category: "career",
       premium: false,
       featured: false,
       thumbnail: "/placeholder.svg",
+      url: "https://drive.google.com/drive/folders/1T8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn"
     },
   ];
 

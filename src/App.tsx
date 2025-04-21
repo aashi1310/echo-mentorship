@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { UserProvider } from "./contexts/UserContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 // Public pages
 import Home from "./pages/Home";
@@ -39,6 +40,7 @@ import MenteeGoals from "./pages/dashboard/mentee/MenteeGoals";
 import GoogleMeetRedirect from "./components/GoogleMeetRedirect";
 
 import NotFound from "./pages/NotFound";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 const queryClient = new QueryClient();
 
@@ -64,23 +66,24 @@ const App = () => (
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/success-stories" element={<SuccessStories />} />
+              <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
               
               {/* Mentor Dashboard Routes */}
-              <Route path="/mentor/dashboard" element={<MentorDashboard />} />
-              <Route path="/mentor/profile" element={<MentorProfile />} />
-              <Route path="/mentor/sessions" element={<MentorSessions />} />
-              <Route path="/mentor/availability" element={<MentorAvailability />} />
-              <Route path="/mentor/resources" element={<MentorResources />} />
-              <Route path="/mentor/mentees" element={<MentorMentees />} />
-              <Route path="/mentor/analytics" element={<MentorAnalytics />} />
+              <Route path="/mentor/dashboard" element={<PrivateRoute element={<MentorDashboard />} requiredRole="mentor" />} />
+              <Route path="/mentor/profile" element={<PrivateRoute element={<MentorProfile />} requiredRole="mentor" />} />
+              <Route path="/mentor/sessions" element={<PrivateRoute element={<MentorSessions />} requiredRole="mentor" />} />
+              <Route path="/mentor/availability" element={<PrivateRoute element={<MentorAvailability />} requiredRole="mentor" />} />
+              <Route path="/mentor/resources" element={<PrivateRoute element={<MentorResources />} requiredRole="mentor" />} />
+              <Route path="/mentor/mentees" element={<PrivateRoute element={<MentorMentees />} requiredRole="mentor" />} />
+              <Route path="/mentor/analytics" element={<PrivateRoute element={<MentorAnalytics />} requiredRole="mentor" />} />
               
               {/* Mentee Dashboard Routes */}
-              <Route path="/mentee/dashboard" element={<MenteeDashboard />} />
-              <Route path="/mentee/profile" element={<MenteeProfile />} />
-              <Route path="/mentee/sessions" element={<MenteeSessions />} />
-              <Route path="/mentee/resources" element={<MenteeResources />} />
-              <Route path="/mentee/mentors" element={<MenteeMentors />} />
-              <Route path="/mentee/goals" element={<MenteeGoals />} />
+              <Route path="/mentee/dashboard" element={<PrivateRoute element={<MenteeDashboard />} requiredRole="mentee" />} />
+              <Route path="/mentee/profile" element={<PrivateRoute element={<MenteeProfile />} requiredRole="mentee" />} />
+              <Route path="/mentee/sessions" element={<PrivateRoute element={<MenteeSessions />} requiredRole="mentee" />} />
+              <Route path="/mentee/resources" element={<PrivateRoute element={<MenteeResources />} requiredRole="mentee" />} />
+              <Route path="/mentee/mentors" element={<PrivateRoute element={<MenteeMentors />} requiredRole="mentee" />} />
+              <Route path="/mentee/goals" element={<PrivateRoute element={<MenteeGoals />} requiredRole="mentee" />} />
               
               {/* Google Meet Session Joining */}
               <Route path="/join-session/:sessionId" element={<GoogleMeetRedirect />} />

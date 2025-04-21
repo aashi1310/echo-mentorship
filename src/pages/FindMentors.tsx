@@ -15,6 +15,36 @@ import FiltersDialog from "@/components/FiltersDialog";
 // Updated mentors with Indian names and more diverse expertise fields
 const mentors = [
   {
+    id: 7,
+    name: "Divyanshi Agarwal",
+    title: "Senior Counselor & Tech Lead at MindfulTech, Noida, India",
+    bio: "Specialized in crisis support and mental health in tech. Based in Noida, providing both in-person and online consultations.",
+    expertise: ["Crisis Support", "Mental Health", "Career Guidance", "Work-Life Balance", "Stress Management"],
+    experience: "8+ years",
+    rating: 4.9,
+    reviews: 56,
+    pricing: "₹2,000/session",
+    availability: "Available Now",
+    image: "/mentors/divyanshi-agarwal.svg",
+    languages: ["English", "Hindi"],
+    isUrgentAvailable: true
+  },
+  {
+    id: 8,
+    name: "Priyank Mishra",
+    title: "Tech Crisis Counselor & Senior Developer at TechSolutions, Noida, India",
+    bio: "Emergency tech support and crisis intervention specialist based in Noida. Available for both on-site and remote consultations.",
+    expertise: ["Crisis Management", "Technical Debugging", "System Recovery", "Emergency Support", "Team Leadership"],
+    experience: "10+ years",
+    rating: 4.8,
+    reviews: 48,
+    pricing: "₹2,200/session",
+    availability: "Available Now",
+    image: "/mentors/priyank-mishra.jpg",
+    languages: ["English", "Hindi"],
+    isUrgentAvailable: true
+  },
+  {
     id: 1,
     name: "Rajat Kumar",
     title: "Senior Product Manager at TechCorp",
@@ -129,13 +159,17 @@ const FindMentors = () => {
 
   // Filter mentors based on search query and selected category
   const filteredMentors = mentors.filter((mentor) => {
-    const matchesSearch = mentor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          mentor.expertise.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                          mentor.title.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    // Case-insensitive search across multiple fields
+    const searchLower = searchQuery.toLowerCase().trim();
+    const matchesSearch = searchLower === "" || 
+      mentor.name.toLowerCase().includes(searchLower) ||
+      mentor.title.toLowerCase().includes(searchLower) ||
+      mentor.expertise.some(skill => skill.toLowerCase().includes(searchLower));
+
+    // Exact category matching
     const matchesCategory = category === "All Categories" || 
-                            mentor.expertise.some(skill => skill.toLowerCase().includes(category.toLowerCase()));
-    
+      mentor.expertise.some(skill => skill === category);
+
     return matchesSearch && matchesCategory;
   });
 
@@ -194,7 +228,10 @@ const FindMentors = () => {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredMentors.map((mentor) => (
-            <Card key={mentor.id} className="overflow-hidden hover:shadow-md transition-shadow">
+            <Card 
+              key={mentor.id} 
+              className={`overflow-hidden hover:shadow-md transition-shadow ${mentor.isUrgentAvailable ? 'border-green-500 border-2 animate-pulse' : ''}`}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start gap-4">
                   <Avatar className="h-16 w-16 border-2 border-primary/10">
