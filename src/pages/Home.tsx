@@ -120,17 +120,17 @@ const Home = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <img
-                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%23f3f4f6'/%3E%3Cpath d='M400 150c-30 0-54.6 24.6-54.6 54.6s24.6 54.6 54.6 54.6 54.6-24.6 54.6-54.6S430 150 400 150zm0 99.2c-24.6 0-44.6-20-44.6-44.6s20-44.6 44.6-44.6 44.6 20 44.6 44.6-20 44.6-44.6 44.6z' fill='%236366f1'/%3E%3Cpath d='M400 350c-66.2 0-120 53.8-120 120h10c0-60.7 49.3-110 110-110s110 49.3 110 110h10c0-66.2-53.8-120-120-120zm-150-150c-24.8 0-45 20.2-45 45s20.2 45 45 45 45-20.2 45-45-20.2-45-45-45zm300 0c-24.8 0-45 20.2-45 45s20.2 45 45 45 45-20.2 45-45-20.2-45-45-45z' fill='%236366f1'/%3E%3Cpath d='M250 350c-49.7 0-90 40.3-90 90h10c0-44.1 35.9-80 80-80s80 35.9 80 80h10c0-49.7-40.3-90-90-90zm300 0c-49.7 0-90 40.3-90 90h10c0-44.1 35.9-80 80-80s80 35.9 80 80h10c0-49.7-40.3-90-90-90z' fill='%236366f1'/%3E%3C/svg%3E"
+                src="/landpage.png"
                 alt="Mentorship Illustration"
-                className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                className="w-full h-full object-contain transform hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+              {/* <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
                 <div className="text-white">
                   <p className="text-sm font-medium mb-1">Featured Mentor</p>
                   <h3 className="text-xl font-bold hover:text-echopurple-400 transition-colors duration-300">Rajat Kumar</h3>
                   <p className="text-sm opacity-90">Tech Leadership | 10+ years experience</p>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           </div>
         </div>
