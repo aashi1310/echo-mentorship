@@ -55,7 +55,7 @@ const Resources = () => {
       premium: false,
       featured: true,
       duration: "25 min read",
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/system design.jpeg",
       url: "https://drive.google.com/file/d/1Ks8KGxKnb9D9MC8qkXR4gZkWqCgbZoBH/view"
     },
     {
@@ -79,7 +79,7 @@ const Resources = () => {
       premium: true,
       featured: true,
       duration: "30 min read",
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/dsa.png",
       url: "https://drive.google.com/file/d/1NpQ8Kw3Rj2Q9X7YtL5mVfK8L2pJ3V9Zn/view"
     },
     {
@@ -114,7 +114,7 @@ const Resources = () => {
       premium: true,
       featured: true,
       duration: "8 hours",
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/fsd.png",
       url: "https://drive.google.com/drive/folders/1R8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn"
     },
     {
@@ -125,7 +125,7 @@ const Resources = () => {
       category: "leadership",
       premium: true,
       featured: true,
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/leadership.jpeg",
       url: "https://drive.google.com/file/d/1S8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn/view"
     },
     {
