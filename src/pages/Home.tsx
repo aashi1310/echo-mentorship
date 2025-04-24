@@ -30,7 +30,7 @@ const Home = () => {
     {
       name: "Priya Sharma",
       role: "Engineering Manager",
-      image: "/placeholder.svg",
+      image: "/priya.jpeg",
       specialties: ["Team Leadership", "Career Growth", "Technical Roadmaps"],
     },
   ];
@@ -250,71 +250,51 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4">
-                <Users />
+            {[
+              {
+                icon: <Users />,
+                title: "Expert Mentors",
+                description: "Connect with verified professionals with real-world experience in your field of interest."
+              },
+              {
+                icon: <Calendar />,
+                title: "Flexible Scheduling", 
+                description: "Book sessions based on your availability with an easy-to-use calendar system."
+              },
+              {
+                icon: <Target />,
+                title: "Goal Tracking",
+                description: "Set clear objectives and track your progress with our milestone system."
+              },
+              {
+                icon: <BookOpen />,
+                title: "Valuable Resources",
+                description: "Access curated content, guides, and templates to supplement your mentorship journey."
+              },
+              {
+                icon: <Award />,
+                title: "XP & Achievements",
+                description: "Stay motivated with our gamified experience points system and unlock badges as you progress."
+              },
+              {
+                icon: <CheckCircle />,
+                title: "Free Trial Session",
+                description: "Test the waters with a complimentary session before committing to a paid plan."
+              }
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-border/50 hover:border-accent/50 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4 group-hover:scale-110 transition-transform duration-300">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-2 hover:text-echopurple-600 dark:hover:text-echopurple-400 transition-colors duration-300">{item.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-300">
+                  {item.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Expert Mentors</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Connect with verified professionals with real-world experience in
-                your field of interest.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4">
-                <Calendar />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Flexible Scheduling</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Book sessions based on your availability with an easy-to-use
-                calendar system.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4">
-                <Target />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Goal Tracking</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Set clear objectives and track your progress with our milestone
-                system.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4">
-                <BookOpen />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Valuable Resources</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Access curated content, guides, and templates to supplement your
-                mentorship journey.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4">
-                <Award />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">XP & Achievements</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Stay motivated with our gamified experience points system and
-                unlock badges as you progress.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4">
-                <CheckCircle />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Free Trial Session</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Test the waters with a complimentary session before committing to
-                a paid plan.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -332,14 +312,14 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <div className="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
               <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-echopurple-600 text-white font-bold flex items-center justify-center">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-4 pt-2">
+              <h3 className="text-xl font-semibold mb-4 pt-2 hover:text-echopurple-600 dark:hover:text-echopurple-400 transition-colors duration-300">
                 Sign Up & Create a Profile
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-gray-600 dark:text-gray-400 mb-4 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-300">
                 Create your account, specify your goals, and complete your
                 profile with your skills and interests.
               </p>
@@ -348,14 +328,14 @@ const Home = () => {
               </Link>
             </div>
 
-            <div className="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <div className="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
               <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-echopurple-600 text-white font-bold flex items-center justify-center">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-4 pt-2">
+              <h3 className="text-xl font-semibold mb-4 pt-2 hover:text-echopurple-600 dark:hover:text-echopurple-400 transition-colors duration-300">
                 Find Your Ideal Mentor
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-gray-600 dark:text-gray-400 mb-4 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-300">
                 Browse mentor profiles, read reviews, and select someone who
                 aligns with your goals and aspirations.
               </p>
@@ -364,14 +344,14 @@ const Home = () => {
               </Link>
             </div>
 
-            <div className="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <div className="relative p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
               <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-echopurple-600 text-white font-bold flex items-center justify-center">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-4 pt-2">
+              <h3 className="text-xl font-semibold mb-4 pt-2 hover:text-echopurple-600 dark:hover:text-echopurple-400 transition-colors duration-300">
                 Book Sessions & Grow
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-gray-600 dark:text-gray-400 mb-4 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-300">
                 Schedule your free trial, then continue with regular sessions.
                 Track your progress and achieve your goals.
               </p>
@@ -383,7 +363,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Mentors Section */}
+      {/* Featured Mentors Section
       <section className="py-16 md:py-24">
         <div className="container px-4 md:px-6">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -472,7 +452,7 @@ const Home = () => {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Testimonials Section */}
       <section className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
