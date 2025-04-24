@@ -103,7 +103,7 @@ const ChatbotButton = () => {
                     handleSendMessage(new Event('submit') as unknown as React.FormEvent);
                   }}
                 >
-                  🆘 Get Emergency Support
+                   Get Emergency Support
                 </Button>
               </div>
             )}

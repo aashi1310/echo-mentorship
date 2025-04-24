@@ -19,7 +19,7 @@ import Faq from "./pages/Faq";
 import Team from "./pages/Team";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-import SuccessStories from "./pages/SuccessStories";
+import SuccessStories from "./pages/EchoDiaries";
 
 // Dashboard pages
 import MentorDashboard from "./pages/dashboard/mentor/MentorDashboard";
