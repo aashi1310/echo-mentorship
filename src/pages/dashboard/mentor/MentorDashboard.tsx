@@ -21,10 +21,10 @@ const MentorDashboard = () => {
           {
             id: 1,
             menteeName: "Aashika Jain",
-            menteeAvatar: "/placeholder.svg",
+            menteeAvatar: "/Aashika.jpg",
             menteeInitials: "AJ",
             date: "Today",
-            time: "3:00 PM - 4:00 PM",
+            time: "2:00 PM - 3:00 PM",
             topic: "Career Growth Strategy",
             notes: "Discuss 5-year plan and potential skill gaps",
           }
@@ -36,7 +36,7 @@ const MentorDashboard = () => {
             avatar: "/placeholder.svg",
             initials: "AJ",
             role: "Frontend Developer",
-            lastSession: "Apr 3, 2023",
+            lastSession: "Apr 25, 2025",
             progress: "On track",
           }
         ]

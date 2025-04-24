@@ -87,8 +87,14 @@ const DashboardSidebar = ({ userType }: SidebarProps) => {
       path: "/mentee/quiz",
       icon: <FileText size={20} />,
     },
+    
     { name: "Mentors", path: "/mentee/mentors", icon: <Users size={20} /> },
     { name: "Goals", path: "/mentee/goals", icon: <Target size={20} /> },
+    {
+      name: "Feedback",
+      path: "/mentee/feedback",
+      icon: <FileText size={20} />,
+    },
   ];
 
   const links = userType === "mentor" ? mentorLinks : menteeLinks;

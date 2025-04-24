@@ -14,11 +14,11 @@ import { useNavigate } from "react-router-dom";
 const initialUpcomingSessions = [
   {
     id: 1,
-    mentee: "Priya Sharma",
+    mentee: "Aashika Jain",
     date: "Today",
-    time: "5:00 PM",
+    time: "2:00 PM",
     topic: "Career Transition",
-    image: "/placeholder.svg",
+    image: "/Aashika.jpg",
     type: "video"
   },
   {
@@ -33,7 +33,7 @@ const initialUpcomingSessions = [
   {
     id: 3,
     mentee: "Neha Gupta",
-    date: "16 Apr",
+    date: "30 Apr",
     time: "6:00 PM",
     topic: "Leadership Skills",
     image: "/placeholder.svg",
