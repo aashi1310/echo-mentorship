@@ -12,7 +12,7 @@ const Home = () => {
     {
       name: "Divyanshi Agarwal",
       role: "Frontend Development Expert",
-      image: "/mentors/divyanshi-agarwal.svg",
+      image: "/Divyanshi.jpg",
       specialties: ["Frontend Development", "React", "UI/UX"],
     },
     {
