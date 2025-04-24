@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +11,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, Loader2 } from "lucide-react";
 import PageLayout from "@/components/layout/PageLayout";
+import { motion } from "framer-motion";
 
 const Contact = () => {
   const [name, setName] = useState("");
@@ -57,21 +57,37 @@ const Contact = () => {
 
   return (
     <PageLayout>
-      <div className="container px-4 py-16 md:py-24">
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Contact Us
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
-            Have questions or feedback? We'd love to hear from you.
-          </p>
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-echopurple-600 to-echoblue-500 py-24">
+        <div className="absolute inset-0 bg-grid-white/10" />
+        <div className="container relative px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl mx-auto text-center text-white"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              Get in Touch
+            </h1>
+            <p className="text-xl text-white/90">
+              Have questions or feedback? We'd love to hear from you.
+            </p>
+          </motion.div>
         </div>
+      </div>
 
+      <div className="container px-4 py-16 md:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-              <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm">
-                <h2 className="text-2xl font-semibold mb-6">Get In Touch</h2>
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h2 className="text-2xl font-semibold mb-6">Send us a Message</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">Your Name</Label>
@@ -82,6 +98,7 @@ const Contact = () => {
                       onChange={(e) => setName(e.target.value)}
                       disabled={loading}
                       required
+                      className="transition-all duration-300 focus:ring-2 focus:ring-echopurple-500"
                     />
                   </div>
                   
@@ -95,6 +112,7 @@ const Contact = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={loading}
                       required
+                      className="transition-all duration-300 focus:ring-2 focus:ring-echopurple-500"
                     />
                   </div>
                   
@@ -106,7 +124,7 @@ const Contact = () => {
                       disabled={loading}
                       required
                     >
-                      <SelectTrigger id="subject">
+                      <SelectTrigger id="subject" className="transition-all duration-300 focus:ring-2 focus:ring-echopurple-500">
                         <SelectValue placeholder="Select a subject" />
                       </SelectTrigger>
                       <SelectContent>
@@ -130,26 +148,47 @@ const Contact = () => {
                       onChange={(e) => setMessage(e.target.value)}
                       disabled={loading}
                       required
+                      className="transition-all duration-300 focus:ring-2 focus:ring-echopurple-500 resize-none"
                     />
                   </div>
                   
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full bg-gradient-to-r from-echopurple-600 to-echoblue-500 hover:from-echopurple-700 hover:to-echoblue-600 transition-all duration-300"
                     disabled={loading}
                   >
-                    {loading ? "Sending..." : "Send Message"}
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="mr-2 h-4 w-4" />
+                        Send Message
+                      </>
+                    )}
                   </Button>
                 </form>
               </div>
-            </div>
+            </motion.div>
             
-            <div className="space-y-8">
-              <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm">
+            {/* Contact Information */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-6"
+            >
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                 <h2 className="text-2xl font-semibold mb-6">Contact Information</h2>
                 <div className="space-y-6">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4">
+                  <motion.div 
+                    className="flex items-start group"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300">
                       <MapPin className="h-6 w-6 text-echopurple-600 dark:text-echopurple-400" />
                     </div>
                     <div>
@@ -160,10 +199,14 @@ const Contact = () => {
                         India
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                   
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4">
+                  <motion.div 
+                    className="flex items-start group"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300">
                       <Phone className="h-6 w-6 text-echopurple-600 dark:text-echopurple-400" />
                     </div>
                     <div>
@@ -175,10 +218,14 @@ const Contact = () => {
                         Mon-Fri from 9am to 6pm IST
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                   
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4">
+                  <motion.div 
+                    className="flex items-start group"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300">
                       <Mail className="h-6 w-6 text-echopurple-600 dark:text-echopurple-400" />
                     </div>
                     <div>
@@ -190,10 +237,14 @@ const Contact = () => {
                         We aim to respond within 24 hours
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                   
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4">
+                  <motion.div 
+                    className="flex items-start group"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex-shrink-0 bg-echopurple-100 dark:bg-echopurple-900 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300">
                       <Clock className="h-6 w-6 text-echopurple-600 dark:text-echopurple-400" />
                     </div>
                     <div>
@@ -204,12 +255,18 @@ const Contact = () => {
                         Sunday: Closed
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
               
-              <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm">
-                <h2 className="text-2xl font-semibold mb-6">Location</h2>
+              {/* Map Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <h2 className="text-2xl font-semibold mb-6">Our Location</h2>
                 <div className="overflow-hidden rounded-lg h-64 bg-gray-200 dark:bg-gray-700">
                   <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28031.098591240207!2d77.50254382465545!3d28.467921040411936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cea7e051fd949%3A0xefccd5003c9032b6!2sGreater%20Noida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1690367264889!5m2!1sen!2sin"
@@ -220,10 +277,11 @@ const Contact = () => {
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     title="EchoMentor Office Location"
+                    className="transition-transform duration-300 hover:scale-105"
                   ></iframe>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
