@@ -128,7 +128,7 @@ const SignIn = () => {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
+                      placeholder="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={isLoading}

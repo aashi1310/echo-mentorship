@@ -182,7 +182,7 @@ const SignUp = () => {
                   <Input
                     id="confirmPassword"
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
@@ -227,7 +227,11 @@ const SignUp = () => {
                       <SelectItem value="education">Education</SelectItem>
                       <SelectItem value="health">Health</SelectItem>
                       <SelectItem value="finance">Finance</SelectItem>
+                      <SelectItem value="entrepreneurship">Entrepreneurship</SelectItem>
+
                       <SelectItem value="other">Other</SelectItem>
+                      
+                      
                     </SelectContent>
                   </Select>
                 </div>

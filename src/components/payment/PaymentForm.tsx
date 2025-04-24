@@ -31,7 +31,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         key: 'rzp_test_51NNNNNNNNNNNNNNx', // Test key for demo
         amount: amount * 100, // Amount in paise
         currency: 'INR',
-        name: 'Echo Rise Mentorship',
+        name: 'EchoMentor Platform',
         description: 'Session Payment',
         order_id: sessionId,
         handler: async function (response: any) {
