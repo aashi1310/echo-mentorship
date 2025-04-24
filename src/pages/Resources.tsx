@@ -67,7 +67,7 @@ const Resources = () => {
       premium: false,
       featured: false,
       duration: "45 min",
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/resume.jpeg",
       url: "https://drive.google.com/file/d/1MnR8wJkX9RxDg7vHbJ2qPwEjkL5K9Ytz/view"
     },
     {
@@ -91,7 +91,7 @@ const Resources = () => {
       premium: false,
       featured: false,
       duration: "1.5 hours",
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/software arch.jpeg",
       url: "https://drive.google.com/file/d/1P8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn/view"
     },
     {
@@ -102,7 +102,7 @@ const Resources = () => {
       category: "productivity",
       premium: true,
       featured: false,
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/proj management.jpeg",
       url: "https://drive.google.com/drive/folders/1Q8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn"
     },
     {
@@ -136,7 +136,7 @@ const Resources = () => {
       category: "career",
       premium: false,
       featured: false,
-      thumbnail: "/placeholder.svg",
+      thumbnail: "/resources/sys des.png",
       url: "https://drive.google.com/drive/folders/1T8qK2vL5RjX9Y7mZ3tN8Kw4L6pJ2V9Zn"
     },
   ];
