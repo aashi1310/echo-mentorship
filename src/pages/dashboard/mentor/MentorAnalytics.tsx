@@ -66,7 +66,7 @@ const MentorAnalytics = () => {
     },
     {
       id: 2,
-      name: "Harsh Shukla",
+      name: "Aisha Patel",
       role: "UX Designer",
       sessionsCompleted: 8,
       goalsAchieved: 4,
@@ -75,7 +75,7 @@ const MentorAnalytics = () => {
     },
     {
       id: 3,
-      name: "Karan Singh",
+      name: "Neha Sharma",
       role: "Product Manager",
       sessionsCompleted: 6,
       goalsAchieved: 2,
@@ -104,12 +104,13 @@ const MentorAnalytics = () => {
   
   // Sample feedback data
   const feedbackData = [
+    
     {
       id: 1,
-      date: "Apr 3, 2025",
-      menteeName: "Rahul Sharma",
+      date: "Apr 24, 2025",
+      menteeName: "Aashika Jain",
       rating: 5,
-      comment: "Excellent guidance on system design concepts. I was able to apply the advice directly in my next interview.",
+      comment: "Very helpful",
       sentiment: "positive",
     },
     {

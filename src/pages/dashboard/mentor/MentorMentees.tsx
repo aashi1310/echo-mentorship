@@ -13,12 +13,12 @@ import { Search, Calendar, Clock, MessageSquare, ArrowUpRight, Filter } from "lu
 const activeMentees = [
   {
     id: 1,
-    name: "Priya Sharma",
+    name: "Aashika Jain",
     goal: "Career Transition to Product Management",
     sessions: 8,
-    lastSession: "2 days ago",
+    lastSession: "Today, 2:00 PM",
     nextSession: "Tomorrow, 5:00 PM",
-    image: "/placeholder.svg",
+    image: "/Aashika.jpg",
     progress: 65,
   },
   {

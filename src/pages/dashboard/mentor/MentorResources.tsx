@@ -20,7 +20,7 @@ const sharedResources = [
     type: "PDF",
     size: "2.4 MB",
     shared: 12,
-    date: "Mar 15, 2023",
+    date: "Apr 25, 2025",
     url: "/resources/tech-interview-questions.pdf"
   },
   {
@@ -30,7 +30,7 @@ const sharedResources = [
     type: "Document",
     size: "1.8 MB",
     shared: 8,
-    date: "Apr 2, 2023",
+    date: "Apr 2, 2025",
     url: "/resources/career-transition.docx"
   },
   {
@@ -40,7 +40,7 @@ const sharedResources = [
     type: "PDF",
     size: "3.2 MB",
     shared: 15,
-    date: "Feb 28, 2023",
+    date: "Feb 28, 2025",
     url: "/resources/system-design.pdf"
   },
 ];
