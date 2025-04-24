@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,8 +22,9 @@ interface EchoDiaries {
 
 const SuccessStories = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const stories: SuccessStory[] = [
+  const stories: EchoDiaries[] = [
     {
       id: 1,
       title: "From Career Confusion to Tech Lead in 18 Months",
@@ -226,27 +226,31 @@ const SuccessStories = () => {
                 >
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="md:w-1/4 flex flex-col items-center text-center">
-                      <img
-                        src={story.image}
-                        alt={story.author}
-                        className="w-24 h-24 rounded-full object-cover mb-4"
-                      />
+                      <div className="relative mb-4">
+                        <img
+                          src={story.image}
+                          alt={story.author}
+                          className="w-24 h-24 rounded-full object-cover ring-4 ring-echopurple-100 dark:ring-echopurple-900"
+                        />
+                        <div className="absolute -bottom-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1">
+                          <div className="flex space-x-0.5">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3 w-3 ${
+                                  i < story.rating
+                                    ? "text-yellow-400 fill-yellow-400"
+                                    : "text-gray-300 dark:text-gray-600"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                       <h4 className="font-semibold">{story.author}</h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                         {story.role}
                       </p>
-                      <div className="flex space-x-1 mb-3">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3.5 w-3.5 ${
-                              i < story.rating
-                                ? "text-yellow-400 fill-yellow-400"
-                                : "text-gray-300 dark:text-gray-600"
-                            }`}
-                          />
-                        ))}
-                      </div>
                       <div className="flex flex-wrap justify-center gap-1 mb-4">
                         {story.tags.map((tag, idx) => (
                           <Badge key={idx} variant="outline" className="text-xs">
@@ -254,13 +258,13 @@ const SuccessStories = () => {
                           </Badge>
                         ))}
                       </div>
-                      <div className="flex flex-col items-center">
-                        <p className="text-xs font-medium mb-1">Mentored by</p>
+                      <div className="mt-auto">
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Mentored by</p>
                         <div className="flex items-center">
                           <img
                             src={story.mentorImage}
                             alt={story.mentor}
-                            className="w-6 h-6 rounded-full mr-2 object-cover"
+                            className="w-6 h-6 rounded-full mr-2 object-cover ring-2 ring-echopurple-500"
                           />
                           <p className="text-sm font-semibold">{story.mentor}</p>
                         </div>
