@@ -236,65 +236,141 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-24">
+      {/* Filter Section */}
+      <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-echopurple-600 to-echoblue-600 bg-clip-text text-transparent">
-              Why Choose EchoMentor?
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 hover:text-echopurple-600 dark:hover:text-echopurple-400 transition-colors duration-300">
-              Our platform offers everything you need for a transformative
-              mentorship experience.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Users />,
-                title: "Expert Mentors",
-                description: "Connect with verified professionals with real-world experience in your field of interest."
-              },
-              {
-                icon: <Calendar />,
-                title: "Flexible Scheduling", 
-                description: "Book sessions based on your availability with an easy-to-use calendar system."
-              },
-              {
-                icon: <Target />,
-                title: "Goal Tracking",
-                description: "Set clear objectives and track your progress with our milestone system."
-              },
-              {
-                icon: <BookOpen />,
-                title: "Valuable Resources",
-                description: "Access curated content, guides, and templates to supplement your mentorship journey."
-              },
-              {
-                icon: <Award />,
-                title: "XP & Achievements",
-                description: "Stay motivated with our gamified experience points system and unlock badges as you progress."
-              },
-              {
-                icon: <CheckCircle />,
-                title: "Free Trial Session",
-                description: "Test the waters with a complimentary session before committing to a paid plan."
-              }
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-border/50 hover:border-accent/50 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {item.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-2 hover:text-echopurple-600 dark:hover:text-echopurple-400 transition-colors duration-300">{item.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-300">
-                  {item.description}
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Companies Column */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">Companies</h3>
+                <Link to="/companies" className="group">
+                  <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <ArrowRight className="h-5 w-5 text-gray-500 group-hover:text-echopurple-500 transition-colors" />
+                  </div>
+                </Link>
               </div>
-            ))}
+              <div className="space-y-3">
+                {[
+                  { name: "Google", icon: "🔍" },
+                  { name: "Amazon", icon: "📦" },
+                  { name: "Meta", icon: "👥" },
+                  { name: "Apple", icon: "🍎" },
+                  { name: "Paypal", icon: "💳" },
+                  { name: "Adobe", icon: "🎨" },
+                  { name: "Oracle", icon: "💾" }
+                ].map((company, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group"
+                    whileHover={{ x: 5 }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg">
+                        {company.icon}
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">{company.name}</span>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-all" />
+                  </motion.div>
+                ))}
+              </div>
+              <Link 
+                to="/companies"
+                className="mt-6 flex items-center justify-center w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
+              >
+                Explore All Companies
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* Domains Column */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">Domains</h3>
+                <Link to="/domains" className="group">
+                  <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <ArrowRight className="h-5 w-5 text-gray-500 group-hover:text-echoblue-500 transition-colors" />
+                  </div>
+                </Link>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { name: "Frontend Developer", icon: "🎨" },
+                  { name: "Backend Developer", icon: "⚙️" },
+                  { name: "Data Scientist", icon: "📊" },
+                  { name: "Fullstack Developer", icon: "💻" },
+                  { name: "QA Engineer", icon: "🔍" },
+                  { name: "Data Engineer", icon: "📈" },
+                  { name: "UI/UX Designer", icon: "✨" }
+                ].map((domain, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group"
+                    whileHover={{ x: 5 }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg">
+                        {domain.icon}
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">{domain.name}</span>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-all" />
+                  </motion.div>
+                ))}
+              </div>
+              <Link 
+                to="/domains"
+                className="mt-6 flex items-center justify-center w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
+              >
+                Explore All Domains
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* Skills Column */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">Skills</h3>
+                <Link to="/skills" className="group">
+                  <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <ArrowRight className="h-5 w-5 text-gray-500 group-hover:text-pink-500 transition-colors" />
+                  </div>
+                </Link>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { name: "Python", icon: "🐍" },
+                  { name: "Java", icon: "☕" },
+                  { name: "Software Testing", icon: "🧪" },
+                  { name: "System Design", icon: "🏗️" },
+                  { name: "DSA", icon: "🔄" },
+                  { name: "Angular", icon: "🅰️" },
+                  { name: "React", icon: "⚛️" }
+                ].map((skill, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer group"
+                    whileHover={{ x: 5 }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg">
+                        {skill.icon}
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-all" />
+                  </motion.div>
+                ))}
+              </div>
+              <Link 
+                to="/skills"
+                className="mt-6 flex items-center justify-center w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
+              >
+                Explore All Skills
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -362,97 +438,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Featured Mentors Section
-      <section className="py-16 md:py-24">
-        <div className="container px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Meet Our Featured Mentors
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Learn from the best minds across diverse fields
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredMentors.map((mentor, idx) => (
-              <div
-                key={idx}
-                className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img
-                    src={mentor.image}
-                    alt={mentor.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center mb-2">
-                    <span className="text-sm bg-echopurple-100 dark:bg-echopurple-900 text-echopurple-600 dark:text-echopurple-400 px-3 py-1 rounded-full font-medium">
-                      {mentor.specialties[0]}
-                    </span>
-                    <div className="ml-auto flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className={
-                            i < 4
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-300 dark:text-gray-600"
-                          }
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-1">
-                    {idx % 3 === 0
-                      ? "Vikram Mehta"
-                      : idx % 3 === 1
-                      ? "Priya Sharma"
-                      : "Arjun Kapoor"}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
-                    {idx % 3 === 0
-                      ? "Senior Software Engineer at TechCorp"
-                      : idx % 3 === 1
-                      ? "Marketing Director at BrandGrowth"
-                      : "Career Coach & Former HR Executive"}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {["Leadership", idx % 3 === 0 ? "Coding" : idx % 3 === 1 ? "Strategy" : "Interview Prep", "Mentorship"].map(
-                      (tag, tagIdx) => (
-                        <span
-                          key={tagIdx}
-                          className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded"
-                        >
-                          {tag}
-                        </span>
-                      )
-                    )}
-                  </div>
-                  <Link to="/find-mentors">
-                    <Button variant="outline" className="w-full">
-                      View Profile
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link to="/find-mentors">
-              <Button size="lg">
-                View All Mentors
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section> */}
 
       {/* Testimonials Section */}
       <section className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900">
