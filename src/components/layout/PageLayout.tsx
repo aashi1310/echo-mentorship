@@ -13,21 +13,10 @@ interface PageLayoutProps {
 }
 
 const PageLayout = ({ 
-  children, 
-  showBanner = false,
-  bannerText = "Get started with a free trial mentoring session today!",
-  bannerLinkText = "Sign up now",
-  bannerLinkUrl = "/signup"
-}: PageLayoutProps) => {
+  children 
+}: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen flex flex-col">
-      {showBanner && (
-        <Banner 
-          text={bannerText} 
-          linkText={bannerLinkText} 
-          linkUrl={bannerLinkUrl} 
-        />
-      )}
       <Navbar />
       <div className="flex-grow pt-16">
         {children}
@@ -37,5 +26,6 @@ const PageLayout = ({
     </div>
   );
 };
+
 
 export default PageLayout;
