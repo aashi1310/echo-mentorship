@@ -63,7 +63,7 @@ const About = () => {
 
           <div className="relative rounded-xl overflow-hidden h-80 mb-12">
             <img
-              src="/placeholder.svg"
+              src="/landpage.png"
               alt="EchoMentor Team"
               className="w-full h-full object-cover"
             />
@@ -164,7 +164,8 @@ const About = () => {
             <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm">
               <div className="h-64 overflow-hidden">
                 <img
-                  src="/placeholder.svg"
+                  src="/Aashika.jpg"
+                  height = "50%"
                   alt="Aashika Jain"
                   className="w-full h-full object-cover"
                 />
@@ -183,7 +184,7 @@ const About = () => {
             <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm">
               <div className="h-64 overflow-hidden">
                 <img
-                  src="/placeholder.svg"
+                  src="/Divyanshi.jpg" 
                   alt="Divyanshi Agarwal"
                   className="w-full h-full object-cover"
                 />
