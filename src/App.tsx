@@ -37,6 +37,7 @@ import MenteeResources from "./pages/dashboard/mentee/MenteeResources";
 import MenteeMentors from "./pages/dashboard/mentee/MenteeMentors";
 import MenteeGoals from "./pages/dashboard/mentee/MenteeGoals";
 import Feedback from "./pages/dashboard/mentee/feedback";
+import Quiz from "./pages/dashboard/mentee/quiz";
 
 import GoogleMeetRedirect from "./components/GoogleMeetRedirect";
 
@@ -86,6 +87,7 @@ const App = () => (
               <Route path="/mentee/mentors" element={<PrivateRoute element={<MenteeMentors />} requiredRole="mentee" />} />
               <Route path="/mentee/goals" element={<PrivateRoute element={<MenteeGoals />} requiredRole="mentee" />} />
               <Route path="/mentee/feedback" element={<PrivateRoute element={<Feedback />} requiredRole="mentee" />} />
+              <Route path="/mentee/quiz" element={<PrivateRoute element={<Quiz />} requiredRole="mentee" />} />
               
               {/* Google Meet Session Joining */}
               <Route path="/join-session/:sessionId" element={<GoogleMeetRedirect />} />
