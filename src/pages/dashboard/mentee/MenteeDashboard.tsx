@@ -194,7 +194,7 @@ const MenteeDashboard = () => {
 
   
 
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Learning Games</CardTitle>
               <CardDescription>Test your knowledge with interactive quizzes</CardDescription>
@@ -202,7 +202,7 @@ const MenteeDashboard = () => {
             <CardContent>
               <QuizGame />
             </CardContent>
-          </Card>
+          </Card> */}
 
           <Card>
             <CardHeader>

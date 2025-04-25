@@ -19,7 +19,7 @@ const initialUpcomingSessions = [
     id: 1,
     mentor: "Divyanshi Agarwal",
     date: "Today",
-    time: "5:00 PM",
+    time: "2:00 PM",
     topic: "Career Transition",
     image: "/mentors/divyanshi-agarwal.svg",
     type: "video",
